@@ -123,6 +123,9 @@ def obtener_filas_para_conjunto(datos_entrenamiento, conjunto, columna):
         print("PARA ELEMENTO: " + str(elemento))
         print(lista)
         print("\n\n\n")
+        contar_valores_conjunto_entrenamiento(lista)
+
+#función que separa los valores mayores a 0 y menores que 1 y los valores menores que 0 y mayores que -1
 
 def obtener_filas_para_normalizado(datos_entrenamiento, columna):
     filas_menor_cero = []
@@ -134,12 +137,16 @@ def obtener_filas_para_normalizado(datos_entrenamiento, columna):
         else:
             filas_menor_cero.append(fila)
     print(filas_mayor_cero)
+    contar_valores_conjunto_entrenamiento(filas_mayor_cero)
     print("\n")
     print(filas_menor_cero)
+    contar_valores_conjunto_entrenamiento(filas_menor_cero)
+    
     print("\n\n\n")
+    
 
 
-
+#función que determina si toda una columna es numérica o no
 
 def es_columna_numerica(datos_entrenamiento, columna):
     for fila in datos_entrenamiento:
