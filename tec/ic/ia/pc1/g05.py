@@ -157,8 +157,8 @@ def generar_votante(provincia):
         else:
             num_partido += 1
 
-    partido = _partidos[num_partido]
-    votante[22] = partido
+    #partido = _partidos[num_partido]
+    votante[22] = num_partido + 1
 
     num_partido = 0
     probabilidad_votos = _probabilidad_votos_2[num_canton]
@@ -170,14 +170,14 @@ def generar_votante(provincia):
         else:
             num_partido += 1
 
-    partido = _partidos_2[num_partido]
-    votante[23] = partido
+    #partido = _partidos_2[num_partido]
+    votante[23] = num_partido + 1
 
     num_canton += 1
     sexo = muestra_sexo(num_canton)
     edad = str(generar_edad(num_canton, sexo))
-    votante[21] = edad
     edad = get_edad(edad)
+    votante[21] = edad
 
     # Indices
     # poblacion
@@ -188,11 +188,12 @@ def generar_votante(provincia):
     votante[2] = _indices_cantonales[2][num_canton]
     # Urbano o no
     votante[3] = sample(_indices_cantonales[3][num_canton])
-    # Relacion hombres-mujeres
-    votante[4] = _indices_cantonales[4][num_canton]
+    # Hombre o Mujer
+    #votante[4] = _indices_cantonales[4][num_canton]
+    votante[4] = sexo
     # Dependencia demografica, mayores a 65
     if(edad < 65):
-        votante[5] = "NO"
+        votante[5] = 0
     else:
         votante[5] = sample(_indices_cantonales[5][num_canton])
     # Ocupa vivienda
@@ -201,15 +202,15 @@ def generar_votante(provincia):
     # promedio ocupantes
     votante[7] = _indices_cantonales[7][num_canton]
     # vivienda en buen estado
-    if(votante[6] == "SI"):
+    if(votante[6] == 1):
         votante[8] = sample(_indices_cantonales[8][num_canton])
     else:
-        votante[8] = "SIN VIVIENDA"
+        votante[8] = 2#"SIN VIVIENDA"
     # vivienda hacinada
-    if(votante[6] == "SI"):
+    if(votante[6] == 1):
         votante[9] = sample(_indices_cantonales[9][num_canton])
     else:
-        votante[9] = "SIN VIVIENDA"
+        votante[9] = 2#"SIN VIVIENDA"
     # alfabetismo
     if(edad <= 24):
         votante[10] = sample(_indices_cantonales[11][num_canton])
@@ -229,31 +230,31 @@ def generar_votante(provincia):
         votante[12] = _indices_cantonales[20][num_canton]
 
     # participacion en la fuerza de trabajo
-    if(sexo == "HOMBRE"):
+    if(sexo == 1): #Hombre = 1 Mujer = 2
         votante[14] = sample(_indices_cantonales[23][num_canton])
     else:
         votante[14] = sample(_indices_cantonales[24][num_canton])
     # fuera de la fuerza de trabajo
-    if(votante[14] == "SI"):
-        votante[13] = "NO"
+    if(votante[14] == 1):
+        votante[13] = 0
     else:
-        votante[13] = "SI"
+        votante[13] = 1
     # porcentaje de poblacion ocupada no asegurada
-    if(votante[14] == "SI"):
+    if(votante[14] == 1):
         votante[15] = sample(_indices_cantonales[25][num_canton])
     else:
-        votante[15] = "NFT"
+        votante[15] = 2#"NFT"
     # Nacido en el extranjero
     votante[16] = sample(_indices_cantonales[26][num_canton])
     # discapacidad
     votante[17] = sample(_indices_cantonales[27][num_canton])
     # poblacion no asegurada
-    if(votante[15] == "NFT"):
+    if(votante[15] == 2):
         votante[18] = sample(_indices_cantonales[28][num_canton])
-    elif(votante[15] == "NO"):
-        votante[18] == "SI"
+    elif(votante[15] == 0):
+        votante[18] == 1
     else:
-        votante[19] == "NO"
+        votante[19] == 0
     # porcentaje de hogares con jefatura femenina
     votante[20] = _indices_cantonales[29][num_canton]
     # porcentaje de hogares con jefatura compartida
@@ -264,9 +265,9 @@ def generar_votante(provincia):
 def sample(probabilidad):
     rand_num = uniform(0, 1)
     if(rand_num <= probabilidad):
-        return "SI"
+        return 1
     else:
-        return "NO"
+        return 0
 
 
 def sumar_vector(vector, max_rango):
@@ -281,23 +282,23 @@ def muestra_sexo(num_canton):
     indice = cantidad_hombres / (cantidad_hombres + 100)
     rand_num = uniform(0, 1)
     if(rand_num < indice):
-        return "HOMBRE"
+        return 1#"HOMBRE"
     else:
-        return "MUJER"
+        return 2#"MUJER"
 
 
 def generar_edad(num_canton, sexo):
     global _edades
     global _distribucion_edades_hombres
     global _distribucion_edades_mujeres
-    if(sexo == "HOMBRE"):
+    if(sexo == 1):
         distribucion = _distribucion_edades_hombres
     else:
         distribucion = _distribucion_edades_mujeres
     probabilidad_acumulada = 0
     probabilidades = []
     for i in range(0, 15):
-        if(sexo == "HOMBRE"):
+        if(sexo == 1):
             probabilidad_acumulada += distribucion[i][num_canton] * -1
         else:
             probabilidad_acumulada += distribucion[i][num_canton]
