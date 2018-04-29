@@ -5,6 +5,7 @@ import time
 import random
 ##################GLOBALES CSV##################
 RUTA_VOTOS_POR_CANTON = "votosPorCanton.csv"
+RUTA_VOTOS_POR_CANTON_2 = "votosPorCanton2.csv"
 RUTA_INDICADORES_POR_CANTON = "indicesCantonales.csv"
 RUTA_EDADES_HOMBRE = "edadesHombres.csv"
 RUTA_EDADES_MUJER = "edadesMujeres.csv"
@@ -15,11 +16,14 @@ _poblacion = 0
 _poblacion_por_canton = []
 _edades_por_canton = []
 _votos = []
+_votos_segunda_ronda = []
 _partidos = []
+_partidos_2 = []
 _distribucion_edades_hombres = []
 _distribucion_edades_mujeres = []
 _edades = []
 _probabilidad_votos = []
+_probabilidad_votos_2 = []
 
 _cantones_por_provincia = [
     [
@@ -61,10 +65,13 @@ def generar_muestra_aux(n, provincia):
     global _poblacion_por_canton
     global _votos
     global _partidos
+    global _partidos_2
     global _distribucion_edades_hombres
     global _distribucion_edades_mujeres
     global _edades
     global _probabilidad_votos
+    global _probabilidad_votos_2
+    global _votos_segunda_ronda
     return_list = []
 
     _indices_cantonales = pd.read_csv(RUTA_INDICADORES_POR_CANTON)
@@ -75,17 +82,27 @@ def generar_muestra_aux(n, provincia):
     _poblacion = set_poblacion(_indices_cantonales)
     _poblacion_por_canton = generar_probabilidad_acumulada(_poblacion)
     _votos = pd.read_csv(RUTA_VOTOS_POR_CANTON)
+    _votos_segunda_ronda = pd.read_csv(RUTA_VOTOS_POR_CANTON_2, encoding = "ISO-8859-1")
     temp = []
+    temp2 = []
     for i in range(1, 82):
         temp += [_votos.ix[:, i]]
+        temp2 += [_votos_segunda_ronda.ix[:, i]]
     _votos = temp
+    _votos_segunda_ronda = temp2
     temp = []
+    temp2 = []
     _partidos = pd.read_csv(RUTA_VOTOS_POR_CANTON, usecols=[0])
+    _partidos_2 = pd.read_csv(RUTA_VOTOS_POR_CANTON_2, encoding = "ISO-8859-1", usecols=[0])
     for i in range(0, 15):
         temp += [_partidos.ix[i, 0]]
+    for i in range(0, 4):
+        temp2 += [_partidos_2.ix[i, 0]]
     _partidos = temp
+    _partidos_2 = temp2
     _distribucion_edades_hombres = pd.read_csv(RUTA_EDADES_HOMBRE)
     temp = []
+    temp2 = []
     for i in range(0, 15):
         temp += [_distribucion_edades_hombres.iloc[i]]
     _distribucion_edades_hombres = temp
@@ -103,6 +120,9 @@ def generar_muestra_aux(n, provincia):
         probabilidades = calcular_probabilidad_votos(
             _votos[i], sumar_vector(_votos[i], 15))
         _probabilidad_votos += [probabilidades]
+        probabilidades_2 = calcular_probabilidad_votos(
+            _votos_segunda_ronda [i], sumar_vector(_votos_segunda_ronda[i], 4))
+        _probabilidad_votos_2 += [probabilidades_2]
     #start = time.clock()
     for i in range(0, n):
         return_list += [generar_votante(provincia)]
@@ -112,7 +132,7 @@ def generar_muestra_aux(n, provincia):
 
 def generar_votante(provincia):
     global _indices_cantonales
-    votante = [0] * 23
+    votante = [0] * 24
     rand_num = uniform(0, _poblacion_por_canton[-1])
     if(provincia == ""):
         num_canton = 0
@@ -139,6 +159,19 @@ def generar_votante(provincia):
 
     partido = _partidos[num_partido]
     votante[22] = partido
+
+    num_partido = 0
+    probabilidad_votos = _probabilidad_votos_2[num_canton]
+    rand_num = uniform(0, 1)
+
+    for probabilidad in probabilidad_votos:
+        if(rand_num <= probabilidad):
+            break
+        else:
+            num_partido += 1
+
+    partido = _partidos_2[num_partido]
+    votante[23] = partido
 
     num_canton += 1
     sexo = muestra_sexo(num_canton)
