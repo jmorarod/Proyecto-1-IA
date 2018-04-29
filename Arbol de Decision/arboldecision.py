@@ -1,4 +1,5 @@
 import math
+from arbol import Nodo, Hoja
 
 # con estos datos de entrenamiento, se pretende crear un árbol de decisión
 
@@ -39,7 +40,7 @@ conjunto_entrenamiento = [
 
 """
 # con estos datos de entrenamiento, se pretende crear un árbol de decisión
-conjunto_entrenamiento = [
+c_entrenamiento = [
     ['young', 'myope', 'no', 'reduced', 'none'],
     ['young', 'myope', 'no', 'normal', 'soft'],
     ['young', 'myope', 'yes', 'reduced', 'none'],
@@ -68,8 +69,41 @@ conjunto_entrenamiento = [
 
 
 ]
-
 """
+
+
+
+c_entrenamiento = [
+    ['young', 'myope', 'no', 'reduced', 'none'],
+    ['young', 'myope', 'no', 'normal', 'none'],
+    ['young', 'myope', 'yes', 'reduced', 'none'],
+    ['young', 'myope', 'yes', 'normal', 'none'],
+    ['young', 'hypermyope', 'no', 'reduced', 'none'],
+    ['young', 'hypermyope', 'no', 'normal', 'none'],
+    ['young', 'hypermyope', 'yes', 'reduced', 'none'],
+    ['young', 'hypermyope', 'yes', 'normal', 'none'],
+    ['pre-pre', 'myope', 'no', 'reduced', 'none'],
+    ['pre-pre', 'myope', 'no', 'normal', 'none'],
+    ['pre-pre', 'myope', 'yes', 'reduced', 'none'],
+    ['pre-pre', 'myope', 'yes', 'normal', 'none'],
+    ['pre-pre', 'hypermyope', 'no', 'reduced', 'none'],
+    ['pre-pre', 'hypermyope', 'no', 'normal', 'none'],
+    ['pre-pre', 'hypermyope', 'yes', 'reduced', 'none'],
+    ['pre-pre', 'hypermyope', 'yes', 'normal', 'none'],
+    ['pre', 'myope', 'no', 'reduced', 'none'],
+    ['pre', 'myope', 'no', 'normal', 'none'],
+    ['pre', 'myope', 'yes', 'reduced', 'none'],
+    ['pre', 'myope', 'yes', 'normal', 'none'],
+    ['pre', 'hypermyope', 'no', 'reduced', 'none'],
+    ['pre', 'hypermyope', 'no', 'normal', 'none'],
+    ['pre', 'hypermyope', 'yes', 'reduced', 'none'],
+    ['pre', 'hypermyope', 'yes', 'normal', 'none'],
+    
+
+
+]
+
+
 """
 conjunto_entrenamiento = [
     ['sunny', 'hot', 'high', 'false', 'no'],
@@ -89,7 +123,7 @@ conjunto_entrenamiento = [
 
 ]
 """
-c_entrenamiento = [['young', 'myope', 'no', 'normal', 'soft'], ['young', 'myope', 'yes', 'normal', 'hard'], ['young', 'hypermyope', 'no', 'normal', 'soft'], ['young', 'hypermyope', 'yes', 'normal', 'hard'], ['pre-pre', 'myope', 'no', 'normal', 'soft'], ['pre-pre', 'myope', 'yes', 'normal', 'hard'], ['pre-pre', 'hypermyope', 'no', 'normal', 'soft'], ['pre-pre', 'hypermyope', 'yes', 'normal', 'none'], ['pre', 'myope', 'no', 'normal', 'none'], ['pre', 'myope', 'yes', 'normal', 'hard'], ['pre', 'hypermyope', 'no', 'normal', 'soft'], ['pre', 'hypermyope', 'yes', 'normal', 'none']]
+#c_entrenamiento = [['young', 'myope', 'no', 'normal', 'soft'], ['young', 'myope', 'yes', 'normal', 'hard'], ['young', 'hypermyope', 'no', 'normal', 'soft'], ['young', 'hypermyope', 'yes', 'normal', 'hard'], ['pre-pre', 'myope', 'no', 'normal', 'soft'], ['pre-pre', 'myope', 'yes', 'normal', 'hard'], ['pre-pre', 'hypermyope', 'no', 'normal', 'soft'], ['pre-pre', 'hypermyope', 'yes', 'normal', 'none'], ['pre', 'myope', 'no', 'normal', 'none'], ['pre', 'myope', 'yes', 'normal', 'hard'], ['pre', 'hypermyope', 'no', 'normal', 'soft'], ['pre', 'hypermyope', 'yes', 'normal', 'none']]
 
 # estos valores representan el valor de cada columna
 encabezados = ['color', 'diámetro', 'valor']
@@ -269,8 +303,6 @@ def obtener_ganancia_columna(filas_conjunto, datos_entrenamiento, entropia):
 #función encargada de recorrer las columnas de los datos de entrenamiento
 
 def recorrer_columnas_datos_entrenamiento(datos_entrenamiento):
-    print("DATOS_ENTRENAMIENTO")
-    print(datos_entrenamiento)
     #primero, se obtiene la entropía
     entropia = obtener_entropia_conjunto_entrenamiento(datos_entrenamiento)
     #luego, se obtiene el número de columnas del conjunto de entrenamiento para recorrerlas
@@ -330,23 +362,71 @@ def es_nodo_hoja(valores, cantidad_por_valor):
     else:
         return False
 
-#función encargada de armar un árbol de decisión
+
+def es_ganancia_cero(ganancias):
+    for i in ganancias:
+        if i != 0.0:
+            return False
+    return True
+
+def retornar_target(filas):
+    fila_actual = filas[0][-1]
+    return fila_actual
+
 
 def armar_arbol(conjunto_entrenamiento):
 
+    #primero, se obtienen las ganancias por columna
+    ganancias_por_columna = recorrer_columnas_datos_entrenamiento(conjunto_entrenamiento)
+
+    #se pregunta si cualquier ganancia es cero
+    if(es_ganancia_cero(ganancias_por_columna)):
+        #en este caso, el target ya está en el conjunto de entrenamiento de entrada
+        target = retornar_target(conjunto_entrenamiento)
+        hoja = Hoja(target)
+        return hoja
+    #de otra forma, aún hay diferentes target en el conjunto de entrenamiento, por lo que se deben tomas distintos caminos
+    else:
+        #se obtiene la columna con más ganancia
+        indice_maximo = obtener_indice_maximo(ganancias_por_columna)
+    
+        #se obtienen los valores diferentes que aporta la columna
+        conjunto_fila_valores_diferentes = valores_unicos_por_columna(conjunto_entrenamiento, indice_maximo)
+    #para cada valor del conjunto, se van a tomar las filas que contengan ese valor
+    for i in conjunto_fila_valores_diferentes:
+        #para cada valor, se obtienen las filas que cumplen con esta característica en la columna especificada
+        filas_elemento = obtener_filas_por_valor_columna(conjunto_entrenamiento, i, indice_maximo)
+    
+    return 0
+
+
+
+
+
+
+
+#función encargada de armar un árbol de decisión
+
+"""
+def armar_arbol(conjunto_entrenamiento):
+    
     #primero, se obtienen todas las ganancias por cada columna
     ganancias_por_columna = recorrer_columnas_datos_entrenamiento(conjunto_entrenamiento)
     
-    print("GANANCIAS")
     print(ganancias_por_columna)
-
+    
     #segundo, se obtiene la columna con más ganancia
     indice_maximo = obtener_indice_maximo(ganancias_por_columna)
-
+    
     #tercero, se obtienen los valores diferentes que aporta la columna
     conjunto_fila_valores_diferentes = valores_unicos_por_columna(conjunto_entrenamiento, indice_maximo)
+
+    #se crea un nodo con el indice maximo
+    #arbol = Nodo("atributo", indice_maximo)
+    
     
     #se recorre cada valor
+    
     for i in conjunto_fila_valores_diferentes:
         #para cada valor, se obtienen las filas que cumplen con esta característica en la columna especificada
         filas_elemento = obtener_filas_por_valor_columna(conjunto_entrenamiento, i, indice_maximo)
@@ -355,17 +435,24 @@ def armar_arbol(conjunto_entrenamiento):
         valores, cantidad_por_valor = contar_valores_conjunto_entrenamiento(filas_elemento)
         
         if not es_nodo_hoja(valores, cantidad_por_valor):
-            print(obtener_entropia_conjunto_entrenamiento(filas_elemento))
-            print(filas_elemento)
-            print(recorrer_columnas_datos_entrenamiento(filas_elemento))
+
+            #print(obtener_entropia_conjunto_entrenamiento(filas_elemento))
+            #print(filas_elemento)
+            #print(recorrer_columnas_datos_entrenamiento(filas_elemento))
             #armar_arbol(filas_elemento)
+        else:
+            nodo_hoja = Nodo("atributo", indice_maximo)
+            nodo_hoja.agregar_target(valores[0])
+            arbol.agregar_hijo(nodo_hoja)
 
-        
-    #print(ganancias_por_columna)
+    return arbol
+    
+    print(ganancias_por_columna)
 
-        
+   """
 
 
-armar_arbol(c_entrenamiento)
+arbol = armar_arbol(c_entrenamiento)
+print(arbol)
 #print(recorrer_columnas_datos_entrenamiento(conjunto_entrenamiento))
 

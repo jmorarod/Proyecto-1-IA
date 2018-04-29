@@ -1,10 +1,15 @@
-class Arbol_Decision:
-
-    def __init__(self):
-
-        #hijos del árbol, como no siempre van a ser dos, se utilizará una lista
-        
+class Nodo:
+    def __init__(self, atributo, columna, valores_columna):
         self.hijos = []
+        self.columna = columna
+        self.valores_columna = valores_columna
+        
+    def agregar_hijo(self, nodo):
+        self.hijos.append
 
-        def agregar_hijos(self, ):
-            self.hijos.append()
+        
+
+#final de los hijos de un nodo
+class Hoja:
+    def __init__(self, target):
+        self.target = target
