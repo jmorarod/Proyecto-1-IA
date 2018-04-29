@@ -37,7 +37,7 @@ conjunto_entrenamiento = [
 ]
 """
 
-
+"""
 # con estos datos de entrenamiento, se pretende crear un árbol de decisión
 conjunto_entrenamiento = [
     ['young', 'myope', 'no', 'reduced', 'none'],
@@ -70,6 +70,7 @@ conjunto_entrenamiento = [
 ]
 
 """
+"""
 conjunto_entrenamiento = [
     ['sunny', 'hot', 'high', 'false', 'no'],
     ['sunny', 'hot', 'high', 'true', 'no'],
@@ -88,7 +89,7 @@ conjunto_entrenamiento = [
 
 ]
 """
-#conjunto_entrenamiento = [['young', 'myope', 'no', 'normal', 'soft'], ['young', 'myope', 'yes', 'normal', 'hard'], ['young', 'hypermyope', 'no', 'normal', 'soft'], ['young', 'hypermyope', 'yes', 'normal', 'hard'], ['pre-pre', 'myope', 'no', 'normal', 'soft'], ['pre-pre', 'myope', 'yes', 'normal', 'hard'], ['pre-pre', 'hypermyope', 'no', 'normal', 'soft'], ['pre-pre', 'hypermyope', 'yes', 'normal', 'none'], ['pre', 'myope', 'no', 'normal', 'none'], ['pre', 'myope', 'yes', 'normal', 'hard'], ['pre', 'hypermyope', 'no', 'normal', 'soft'], ['pre', 'hypermyope', 'yes', 'normal', 'none']]
+c_entrenamiento = [['young', 'myope', 'no', 'normal', 'soft'], ['young', 'myope', 'yes', 'normal', 'hard'], ['young', 'hypermyope', 'no', 'normal', 'soft'], ['young', 'hypermyope', 'yes', 'normal', 'hard'], ['pre-pre', 'myope', 'no', 'normal', 'soft'], ['pre-pre', 'myope', 'yes', 'normal', 'hard'], ['pre-pre', 'hypermyope', 'no', 'normal', 'soft'], ['pre-pre', 'hypermyope', 'yes', 'normal', 'none'], ['pre', 'myope', 'no', 'normal', 'none'], ['pre', 'myope', 'yes', 'normal', 'hard'], ['pre', 'hypermyope', 'no', 'normal', 'soft'], ['pre', 'hypermyope', 'yes', 'normal', 'none']]
 
 # estos valores representan el valor de cada columna
 encabezados = ['color', 'diámetro', 'valor']
@@ -282,7 +283,7 @@ def recorrer_columnas_datos_entrenamiento(datos_entrenamiento):
         #se obtienen los valores diferentes que se pueden categorizar para la columna actual
         conjunto_fila_valores_diferentes = valores_unicos_por_columna(datos_entrenamiento, i)
         #se obtienen todas las filas que se relacionan con los valores categóricos obtenidos anteriormente
-        filas_conjunto = obtener_filas_para_conjunto(conjunto_entrenamiento, conjunto_fila_valores_diferentes, i)
+        filas_conjunto = obtener_filas_para_conjunto(datos_entrenamiento, conjunto_fila_valores_diferentes, i)
         #se obtiene la ganancia para la columna actual
         ganancia = obtener_ganancia_columna(filas_conjunto, datos_entrenamiento, entropia)
         ganancia_por_columna.append(ganancia)
@@ -365,6 +366,6 @@ def armar_arbol(conjunto_entrenamiento):
         
 
 
-armar_arbol(conjunto_entrenamiento)
+armar_arbol(c_entrenamiento)
 #print(recorrer_columnas_datos_entrenamiento(conjunto_entrenamiento))
 
