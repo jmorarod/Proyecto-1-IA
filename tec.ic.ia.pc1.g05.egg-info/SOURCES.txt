@@ -7,5 +7,4 @@ tec.ic.ia.pc1.g05.egg-info/SOURCES.txt
 tec.ic.ia.pc1.g05.egg-info/dependency_links.txt
 tec.ic.ia.pc1.g05.egg-info/requires.txt
 tec.ic.ia.pc1.g05.egg-info/top_level.txt
-tec/ic/ia/pc1/__init__.py
 tec/ic/ia/pc1/g05.py
