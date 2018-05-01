@@ -1,6 +1,7 @@
 import math
 import random
 
+
 class Node:
 
     def __init__(self, dimension, data):
