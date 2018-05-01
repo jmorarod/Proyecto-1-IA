@@ -4,7 +4,7 @@ from arbol import Nodo, Hoja
 # con estos datos de entrenamiento, se pretende crear un árbol de decisión
 
 """
-conjunto_entrenamiento = [
+c_entrenamiento = [
     [-0.3, -0.3, 0.3, 'SI', 0.3, 'NO', 'NO', -0.3, 'SIN VIVIENDA', 'CON VIVIENDA', 'SI', 0.3, 0.3, 'NO', 'SI', 'SI', 'SI', 'SI', 0.3, 0.3, 0.3, '20 a 24', 'ACCION CIUDADANA'],
     [-0.2, -0.3, 0.3, 'NO', 0.3, 'SI', 'SI', -0.3, 'CON VIVIENDA', 'SIN VIVIENDA', 'SI', 0.3, 0.3, 'NO', 'SI', 'SI', 'SI', 'SI', 0.3, 0.3, -0.3, '20 a 24', 'ACCION CIUDADANA'],
     [-0.1, -0.3, 0.3, 'SI', 0.3, 'NO', 'NO', -0.3, 'SIN VIVIENDA', 'CON VIVIENDA', 'NO', 0.3, 0.3, 'NO', 'SI', 'SI', 'SI', 'SI', 0.3, 0.3, 0.3, '20 a 30', 'RESTAURACION NACIONAL'],
@@ -87,7 +87,7 @@ c_entrenamiento = [
     ['pre-pre', 'myope', 'yes', 'reduced', 'none'],
     ['pre-pre', 'myope', 'yes', 'normal', 'none'],
     ['pre-pre', 'hypermyope', 'no', 'reduced', 'none'],
-    ['pre-pre', 'hypermyope', 'no', 'normal', 'none'],
+    ['pre-pre', 'hypermyope', 'no', 'normal', 'nonee'],
     ['pre-pre', 'hypermyope', 'yes', 'reduced', 'none'],
     ['pre-pre', 'hypermyope', 'yes', 'normal', 'none'],
     ['pre', 'myope', 'no', 'reduced', 'none'],
@@ -123,6 +123,10 @@ conjunto_entrenamiento = [
 
 ]
 """
+
+#será útil para uno de los casos de los árboles de decisión, guardará los índice de los atributos de mayor utilidad
+atributos_utilizados = []
+
 #c_entrenamiento = [['young', 'myope', 'no', 'normal', 'soft'], ['young', 'myope', 'yes', 'normal', 'hard'], ['young', 'hypermyope', 'no', 'normal', 'soft'], ['young', 'hypermyope', 'yes', 'normal', 'hard'], ['pre-pre', 'myope', 'no', 'normal', 'soft'], ['pre-pre', 'myope', 'yes', 'normal', 'hard'], ['pre-pre', 'hypermyope', 'no', 'normal', 'soft'], ['pre-pre', 'hypermyope', 'yes', 'normal', 'none'], ['pre', 'myope', 'no', 'normal', 'none'], ['pre', 'myope', 'yes', 'normal', 'hard'], ['pre', 'hypermyope', 'no', 'normal', 'soft'], ['pre', 'hypermyope', 'yes', 'normal', 'none']]
 
 # estos valores representan el valor de cada columna
@@ -362,6 +366,7 @@ def es_nodo_hoja(valores, cantidad_por_valor):
     else:
         return False
 
+#función que indica si una lista de ganancias no aporta
 
 def es_ganancia_cero(ganancias):
     for i in ganancias:
@@ -369,11 +374,88 @@ def es_ganancia_cero(ganancias):
             return False
     return True
 
+#función encargada de retornar el valor de un target
+
 def retornar_target(filas):
     fila_actual = filas[0][-1]
     return fila_actual
 
 
+def obtener_max_lista(valores, cantidad_por_valor):
+    tamano = len(valores)
+    maximo = cantidad_por_valor[0]
+    indice_devolver = 0
+    for i in range(1, tamano):
+        if cantidad_por_valor[i] > maximo:
+            maximo = cantidad_por_valor[i]
+            indice_devolver = i
+    return valores[indice_devolver]
+
+def obtener_pluralidad(filas):
+    valores = []
+    cantidad_por_valor = []
+
+    for i in range(len(filas)):
+        # tomando el último valor del encabezado
+        valor = filas[i][-1]
+        if valor in valores:
+            indice_valores = retornar_indice_valores(valores, valor)
+            cantidad_por_valor[indice_valores] += 1
+        else:
+            valores.append(valor)
+            cantidad_por_valor.append(1)
+    print(obtener_max_lista(valores, cantidad_por_valor))
+    
+def son_todos_target_iguales(filas):
+    largo = len(filas)
+    target = filas[0][-1]
+    for i in range(1, largo):
+        if filas[i][-1] != target:
+            return False
+    return True
+
+#función encargada de devolver las ganancias que se pueden utilizar para 
+def reducir_ganancias_por_atributos_utilizados(ganancias):
+    respuesta = []
+    tamano = len(ganancias)
+    for i in range(tamano):
+        if i not in atributos_utilizados:
+            respuesta.append(ganancias[i])
+    return respuesta
+
+def armar_arbol(conjunto_entrenamiento, filas_padre):
+
+    #caso 1, se pregunta si quedan ejemplos disponibles para este camino
+    if conjunto_entrenamiento == []:
+        #generar hoja aquí
+        obtener_pluralidad(filas_padre)
+    else:
+        #caso 2, todos los target son iguales para el conjunto de entrenamiento
+        if(son_todos_target_iguales(conjunto_entrenamiento)):
+            #generar hoja aquí
+            print("siii")
+        else:
+
+            #hacer split
+            #1.obtener las ganancias para cada columna
+            ganancias_por_columna = recorrer_columnas_datos_entrenamiento(conjunto_entrenamiento)
+            #ganancias_permitidas = reducir_ganancias_por_atributos_utilizados(ganancias_por_columna)
+            ganancias_permitidas = []
+            #2.ver si quedan atributos disponibles para hacer split
+            if ganancias_permitidas == []:
+                obtener_pluralidad(conjunto_entrenamiento)
+                #crear una hoja aquí
+            else:
+                indice_maximo = obtener_indice_maximo(ganancias_permitidas)
+                conjunto_fila_valores_diferentes = valores_unicos_por_columna(conjunto_entrenamiento, indice_maximo)                
+
+
+            print("nuuu")
+    return 0
+        
+
+
+"""
 def armar_arbol(conjunto_entrenamiento):
 
     #primero, se obtienen las ganancias por columna
@@ -398,6 +480,7 @@ def armar_arbol(conjunto_entrenamiento):
         filas_elemento = obtener_filas_por_valor_columna(conjunto_entrenamiento, i, indice_maximo)
     
     return 0
+"""
 
 
 
@@ -452,7 +535,7 @@ def armar_arbol(conjunto_entrenamiento):
    """
 
 
-arbol = armar_arbol(c_entrenamiento)
-print(arbol)
+#arbol = armar_arbol([], c_entrenamiento)
+#print(arbol)
 #print(recorrer_columnas_datos_entrenamiento(conjunto_entrenamiento))
-
+armar_arbol(c_entrenamiento, c_entrenamiento)
