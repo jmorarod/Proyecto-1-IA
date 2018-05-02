@@ -1,5 +1,5 @@
 import math
-from arbol import Nodo, Hoja
+from arbol import Nodo, Hoja, Atributo
 
 # con estos datos de entrenamiento, se pretende crear un árbol de decisión
 
@@ -38,7 +38,7 @@ c_entrenamiento = [
 ]
 """
 
-"""
+
 # con estos datos de entrenamiento, se pretende crear un árbol de decisión
 c_entrenamiento = [
     ['young', 'myope', 'no', 'reduced', 'none'],
@@ -69,9 +69,9 @@ c_entrenamiento = [
 
 
 ]
+
+
 """
-
-
 
 c_entrenamiento = [
     ['young', 'myope', 'no', 'reduced', 'none'],
@@ -102,7 +102,7 @@ c_entrenamiento = [
 
 
 ]
-
+"""
 
 """
 conjunto_entrenamiento = [
@@ -126,11 +126,12 @@ conjunto_entrenamiento = [
 
 #será útil para uno de los casos de los árboles de decisión, guardará los índice de los atributos de mayor utilidad
 atributos_utilizados = []
+encabezados = []
 
 #c_entrenamiento = [['young', 'myope', 'no', 'normal', 'soft'], ['young', 'myope', 'yes', 'normal', 'hard'], ['young', 'hypermyope', 'no', 'normal', 'soft'], ['young', 'hypermyope', 'yes', 'normal', 'hard'], ['pre-pre', 'myope', 'no', 'normal', 'soft'], ['pre-pre', 'myope', 'yes', 'normal', 'hard'], ['pre-pre', 'hypermyope', 'no', 'normal', 'soft'], ['pre-pre', 'hypermyope', 'yes', 'normal', 'none'], ['pre', 'myope', 'no', 'normal', 'none'], ['pre', 'myope', 'yes', 'normal', 'hard'], ['pre', 'hypermyope', 'no', 'normal', 'soft'], ['pre', 'hypermyope', 'yes', 'normal', 'none']]
 
 # estos valores representan el valor de cada columna
-encabezados = ['color', 'diámetro', 'valor']
+#encabezados = ['color', 'diámetro', 'valor']
 
 # esta función devuelve una lista, que consiste en los valores para la
 # columna que se le pase como parámetro
@@ -404,7 +405,7 @@ def obtener_pluralidad(filas):
         else:
             valores.append(valor)
             cantidad_por_valor.append(1)
-    print(obtener_max_lista(valores, cantidad_por_valor))
+    return obtener_max_lista(valores, cantidad_por_valor)
     
 def son_todos_target_iguales(filas):
     largo = len(filas)
@@ -414,128 +415,116 @@ def son_todos_target_iguales(filas):
             return False
     return True
 
+def obtener_lista_atributos_utilizados():
+    lista_retorno = []
+    for i in atributos_utilizados:
+        lista_retorno.append(i.nombre)
+    return lista_retorno
+
 #función encargada de devolver las ganancias que se pueden utilizar para 
 def reducir_ganancias_por_atributos_utilizados(ganancias):
-    respuesta = []
+    respuesta_ganancias = []
+    respuesta_encabezados = []
+    atributos = obtener_lista_atributos_utilizados()
     tamano = len(ganancias)
     for i in range(tamano):
-        if i not in atributos_utilizados:
-            respuesta.append(ganancias[i])
-    return respuesta
+        if i not in atributos:
+            respuesta_ganancias.append(ganancias[i])
+            respuesta_encabezados.append(encabezados[i])
+    return respuesta_ganancias, respuesta_encabezados
+
+
+def obtener_indice_encabezado(nombre):
+    return encabezados.index(nombre)
 
 def armar_arbol(conjunto_entrenamiento, filas_padre):
 
     #caso 1, se pregunta si quedan ejemplos disponibles para este camino
     if conjunto_entrenamiento == []:
         #generar hoja aquí
-        obtener_pluralidad(filas_padre)
+        target = obtener_pluralidad(filas_padre)
+        hoja = Hoja(target)
+        return hoja
     else:
         #caso 2, todos los target son iguales para el conjunto de entrenamiento
         if(son_todos_target_iguales(conjunto_entrenamiento)):
+            target = retornar_target(conjunto_entrenamiento)
+            hoja = Hoja(target)
+            return hoja
             #generar hoja aquí
-            print("siii")
+            
         else:
 
             #hacer split
             #1.obtener las ganancias para cada columna
             ganancias_por_columna = recorrer_columnas_datos_entrenamiento(conjunto_entrenamiento)
-            #ganancias_permitidas = reducir_ganancias_por_atributos_utilizados(ganancias_por_columna)
-            ganancias_permitidas = []
+            ganancias_permitidas, encabezados_permitidos = reducir_ganancias_por_atributos_utilizados(ganancias_por_columna)
+                
+            #ganancias_permitidas = []
             #2.ver si quedan atributos disponibles para hacer split
             if ganancias_permitidas == []:
-                obtener_pluralidad(conjunto_entrenamiento)
+                target = obtener_pluralidad(conjunto_entrenamiento)
+                hoja = Hoja(target)
+                return hoja
                 #crear una hoja aquí
             else:
+                hijos = []
                 indice_maximo = obtener_indice_maximo(ganancias_permitidas)
-                conjunto_fila_valores_diferentes = valores_unicos_por_columna(conjunto_entrenamiento, indice_maximo)                
 
+                encabezado_nodo = encabezados_permitidos[indice_maximo]
+                ganancia_nodo = ganancias_permitidas[indice_maximo]
 
-            print("nuuu")
-    return 0
+                atributo = Atributo(ganancia_nodo, encabezado_nodo)
+
+                indice_nodo = obtener_indice_encabezado(encabezado_nodo)
+
+                atributos_utilizados.append(atributo)
+                conjunto_fila_valores_diferentes = valores_unicos_por_columna(conjunto_entrenamiento, indice_maximo)
+
+                for i in conjunto_fila_valores_diferentes:
+                    #para cada valor, se obtienen las filas que cumplen con esta característica en la columna especificada
+                    filas_elemento = obtener_filas_por_valor_columna(conjunto_entrenamiento, i, indice_maximo)
+                    #se llama de nuevo a la función, con los elementos del nuevo camino y los elementos del padre
+                    nodo = armar_arbol(filas_elemento, conjunto_entrenamiento)
+                    hijos.append(nodo)
+                nodo = Nodo(hijos, indice_nodo, conjunto_fila_valores_diferentes, ganancias_permitidas[indice_maximo])
+                return nodo
         
 
 
-"""
-def armar_arbol(conjunto_entrenamiento):
-
-    #primero, se obtienen las ganancias por columna
-    ganancias_por_columna = recorrer_columnas_datos_entrenamiento(conjunto_entrenamiento)
-
-    #se pregunta si cualquier ganancia es cero
-    if(es_ganancia_cero(ganancias_por_columna)):
-        #en este caso, el target ya está en el conjunto de entrenamiento de entrada
-        target = retornar_target(conjunto_entrenamiento)
-        hoja = Hoja(target)
-        return hoja
-    #de otra forma, aún hay diferentes target en el conjunto de entrenamiento, por lo que se deben tomas distintos caminos
-    else:
-        #se obtiene la columna con más ganancia
-        indice_maximo = obtener_indice_maximo(ganancias_por_columna)
+def generar_header_conjunto_entrenamiento(conjunto_entrenamiento):
+    tamano = len(conjunto_entrenamiento[0])
+    for i in range(tamano-1):
+        encabezado = "Atributo: "+str(i)
+        encabezados.append(encabezado)
+    return encabezados
     
-        #se obtienen los valores diferentes que aporta la columna
-        conjunto_fila_valores_diferentes = valores_unicos_por_columna(conjunto_entrenamiento, indice_maximo)
-    #para cada valor del conjunto, se van a tomar las filas que contengan ese valor
-    for i in conjunto_fila_valores_diferentes:
-        #para cada valor, se obtienen las filas que cumplen con esta característica en la columna especificada
-        filas_elemento = obtener_filas_por_valor_columna(conjunto_entrenamiento, i, indice_maximo)
+
+
+
+def recorrer_arbol(arbol):
+    if(isinstance(arbol, Nodo)):
+        #print("recorriendo hijos")
+        print(arbol.hijos)
+            
+        for i in arbol.hijos:
+            recorrer_arbol(i)
+    elif(isinstance(arbol, Hoja)):
+        #print("esto es una hoja")
+        print(arbol.target)
+
+def generar_arbol():
+    generar_header_conjunto_entrenamiento(c_entrenamiento)
+    print (obtener_indice_encabezado("Atributo: 0"))
     
-    return 0
-"""
+    #print(encabezados)
+    arbol = armar_arbol(c_entrenamiento, c_entrenamiento)
+    recorrer_arbol(arbol)
 
-
-
-
-
-
-
-#función encargada de armar un árbol de decisión
-
-"""
-def armar_arbol(conjunto_entrenamiento):
-    
-    #primero, se obtienen todas las ganancias por cada columna
-    ganancias_por_columna = recorrer_columnas_datos_entrenamiento(conjunto_entrenamiento)
-    
-    print(ganancias_por_columna)
-    
-    #segundo, se obtiene la columna con más ganancia
-    indice_maximo = obtener_indice_maximo(ganancias_por_columna)
-    
-    #tercero, se obtienen los valores diferentes que aporta la columna
-    conjunto_fila_valores_diferentes = valores_unicos_por_columna(conjunto_entrenamiento, indice_maximo)
-
-    #se crea un nodo con el indice maximo
-    #arbol = Nodo("atributo", indice_maximo)
-    
-    
-    #se recorre cada valor
-    
-    for i in conjunto_fila_valores_diferentes:
-        #para cada valor, se obtienen las filas que cumplen con esta característica en la columna especificada
-        filas_elemento = obtener_filas_por_valor_columna(conjunto_entrenamiento, i, indice_maximo)
-       
-        #se obtienen los target para dichas filas
-        valores, cantidad_por_valor = contar_valores_conjunto_entrenamiento(filas_elemento)
-        
-        if not es_nodo_hoja(valores, cantidad_por_valor):
-
-            #print(obtener_entropia_conjunto_entrenamiento(filas_elemento))
-            #print(filas_elemento)
-            #print(recorrer_columnas_datos_entrenamiento(filas_elemento))
-            #armar_arbol(filas_elemento)
-        else:
-            nodo_hoja = Nodo("atributo", indice_maximo)
-            nodo_hoja.agregar_target(valores[0])
-            arbol.agregar_hijo(nodo_hoja)
-
-    return arbol
-    
-    print(ganancias_por_columna)
-
-   """
-
-
-#arbol = armar_arbol([], c_entrenamiento)
-#print(arbol)
+generar_arbol()
+#print(generar_header_conjunto_entrenamiento(c_entrenamiento))
+#arbol = armar_arbol(c_entrenamiento, c_entrenamiento)
+#print(arbol.target)
 #print(recorrer_columnas_datos_entrenamiento(conjunto_entrenamiento))
-armar_arbol(c_entrenamiento, c_entrenamiento)
+
+#armar_arbol(c_entrenamiento, c_entrenamiento))

@@ -1,8 +1,9 @@
 class Nodo:
-    def __init__(self, atributo, columna, valores_columna):
-        self.hijos = []
+    def __init__(self, hijos, columna, valores_columna, ganancia):
+        self.hijos = hijos
         self.columna = columna
         self.valores_columna = valores_columna
+        self.ganancia = ganancia
         
     def agregar_hijo(self, nodo):
         self.hijos.append
@@ -13,3 +14,9 @@ class Nodo:
 class Hoja:
     def __init__(self, target):
         self.target = target
+
+
+class Atributo:
+    def __init__(self, ganancia, nombre):
+        self.ganancia = ganancia
+        self.nombre = nombre
