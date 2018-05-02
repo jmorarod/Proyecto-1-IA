@@ -1,138 +1,19 @@
 import math
 from arbol import Nodo, Hoja, Atributo
-
-# con estos datos de entrenamiento, se pretende crear un árbol de decisión
-
-"""
-c_entrenamiento = [
-    [-0.3, -0.3, 0.3, 'SI', 0.3, 'NO', 'NO', -0.3, 'SIN VIVIENDA', 'CON VIVIENDA', 'SI', 0.3, 0.3, 'NO', 'SI', 'SI', 'SI', 'SI', 0.3, 0.3, 0.3, '20 a 24', 'ACCION CIUDADANA'],
-    [-0.2, -0.3, 0.3, 'NO', 0.3, 'SI', 'SI', -0.3, 'CON VIVIENDA', 'SIN VIVIENDA', 'SI', 0.3, 0.3, 'NO', 'SI', 'SI', 'SI', 'SI', 0.3, 0.3, -0.3, '20 a 24', 'ACCION CIUDADANA'],
-    [-0.1, -0.3, 0.3, 'SI', 0.3, 'NO', 'NO', -0.3, 'SIN VIVIENDA', 'CON VIVIENDA', 'NO', 0.3, 0.3, 'NO', 'SI', 'SI', 'SI', 'SI', 0.3, 0.3, 0.3, '20 a 30', 'RESTAURACION NACIONAL'],
-    [-0.9, 0.3, -0.3, 'NO', -0.3, 'SI', 'NO', 0.3, 'CON VIVIENDA', 'SIN VIVIENDA', 'SI', -0.3, -0.3, 'NO', 'SI', 'SI', 'SI', 'SI', -0.3, -0.3, -0.3, '20 a 24', 'FRENTE AMPLIO'],
-    [0.3, 0.3, -0.3, 'SI', -0.3, 'NO', 'NO', 0.3, 'SIN VIVIENDA', 'CON VIVIENDA', 'SI', -0.3, -0.3, 'NO', 'SI', 'SI', 'SI', 'SI', -0.3, -0.3, 0.3, '20 a 50', 'RESTAURACION NACIONAL'],
-    [0.3, 0.3, -0.3, 'NO', -0.3, 'SI', 'NO', 0.3, 'CON VIVIENDA', 'SIN VIVIENDA', 'SI', -0.3, -0.3, 'SI', 'SI', 'SI', 'SI', 'SI', -0.3, -0.3, -0.3, '20 a 24', 'ACCION CIUDADANA'],
-    [0.3, -0.3, 0.3, 'SI', 0.3, 'NO', 'NO', -0.3, 'SIN VIVIENDA', 'CON VIVIENDA', 'SI', 0.3, 0.3, 'NO', 'SI', 'NO', 'NO', 'NO', 0.3, -0.3, -0.3, '20 a 30', 'RESTAURACION NACIONAL'],
-    [-0.3, -0.3, 0.3, 'NO', 0.3, 'NO', 'NO', -0.3, 'CON VIVIENDA', 'SIN VIVIENDA', 'SI', 0.3, 0.3, 'NO', 'NO', 'SI', 'SI', 'SI', 0.3, 0.3, -0.3, '20 a 24', 'ACCION CIUDADANA'],
-    [-0.3, -0.3, 0.3, 'SI', 0.3, 'NO', 'NO', -0.3, 'SIN VIVIENDA', 'CON VIVIENDA', 'SI', 0.3, -0.3, 'NO', 'SI', 'SI', 'SI', 'SI', 0.3, 0.3, 0.3, '20 a 50', 'RESTAURACION NACIONAL'],
-    [-0.3, 0.3, -0.3, 'NO', -0.3, 'NO', 'NO', 0.3, 'CON VIVIENDA', 'SIN VIVIENDA', 'SI', -0.3, -0.3, 'NO', 'SI', 'SI', 'SI', 'SI', -0.3, 0.3, -0.3, '20 a 30', 'ACCION CIUDADANA'],
-    [0.3, 0.3, -0.3, 'SI', -0.3, 'NO', 'NO', 0.3, 'SIN VIVIENDA', 'CON VIVIENDA', 'SI', -0.3, 0.3, 'NO', 'SI', 'SI', 'SI', 'SI', -0.3, -0.3, -0.3, '20 a 24', 'RESTAURACION NACIONAL'],
-    [0.3, 0.3, -0.3, 'NO', -0.3, 'NO', 'NO', 0.3, 'CON VIVIENDA', 'SIN VIVIENDA', 'SI', -0.3, 0.3, 'NO', 'SI', 'SI', 'SI', 'SI', -0.3, -0.3, -0.3, '20 a 50', 'ACCION CIUDADANA'],
-    [0.3, -0.3, 0.3, 'SI', 0.3, 'NO', 'NO', -0.3, 'SIN VIVIENDA', 'CON VIVIENDA', 'SI', 0.3, 0.3, 'NO', 'SI', 'SI', 'SI', 'SI', 0.3, -0.3, 0.3, '20 a 24', 'RESTAURACION NACIONAL'],
-    [-0.3, -0.3, 0.3, 'NO', 0.3, 'NO', 'NO', -0.3, 'CON VIVIENDA', 'SIN VIVIENDA', 'SI', 0.3, 0.3, 'NO', 'SI', 'SI', 'SI', 'SI', 0.3, -0.3, -0.3, '20 a 30', 'ACCION CIUDADANA'],
-    [-0.3, -0.3, 0.3, 'SI', 0.3, 'NO', 'NO', -0.3, 'SIN VIVIENDA', 'CON VIVIENDA', 'SI', 0.3, -0.3, 'NO', 'SI', 'SI', 'SI', 'SI', 0.3, 0.3, -0.3, '20 a 24', 'RESTAURACION NACIONAL'],
-    [-0.3, 0.3, -0.3, 'NO', -0.3, 'NO', 'NO', 0.3, 'CON VIVIENDA', 'SIN VIVIENDA', 'SI', -0.3, -0.3, 'NO', 'SI', 'SI', 'SI', 'SI', -0.3, 0.3, -0.3, '20 a 24', 'ACCION CIUDADANA'],
-    [0.3, 0.3, -0.3, 'SI', -0.3, 'NO', 'NO', 0.3, 'SIN VIVIENDA', 'CON VIVIENDA', 'SI', -0.3, -0.3, 'NO', 'SI', 'SI', 'SI', 'SI', -0.3, -0.3, -0.3, '20 a 50', 'RESTAURACION NACIONAL'],
-    [0.3, 0.3, -0.3, 'NO', -0.3, 'NO', 'NO', 0.3, 'SIN VIVIENDA', 'SIN VIVIENDA', 'SI', -0.3, 0.3, 'NO', 'SI', 'SI', 'SI', 'SI', -0.3, 0.3, -0.3, '20 a 24', 'ACCION CIUDADANA'],
-    [0.3, -0.3, 0.3, 'SI', 0.3, 'NO', 'NO', -0.3, 'CON VIVIENDA', 'CON VIVIENDA', 'SI', 0.3, 0.3, 'NO', 'SI', 'SI', 'SI', 'SI', 0.3, -0.3, 0.3, '20 a 30', 'RESTAURACION NACIONAL'],
-    [-0.3, -0.3, 0.3, 'NO', 0.3, 'NO', 'NO', -0.3, 'SIN VIVIENDA', 'SIN VIVIENDA', 'SI', 0.3, 0.3, 'NO', 'SI', 'SI', 'SI', 'SI', 0.3, -0.3, -0.3, '20 a 24', 'ACCION CIUDADANA'],
-    [-0.3, -0.3, 0.3, 'SI', 0.3, 'NO', 'NO', -0.3, 'CON VIVIENDA', 'CON VIVIENDA', 'SI', 0.3, 0.3, 'NO', 'SI', 'SI', 'SI', 'SI', 0.3, -0.3, -0.3, '20 a 50', 'RESTAURACION NACIONAL'],
-    [-0.3, 0.3, -0.3, 'NO', -0.3, 'NO', 'NO', 0.3, 'SIN VIVIENDA', 'SIN VIVIENDA', 'SI', -0.3, -0.3, 'NO', 'SI', 'SI', 'SI', 'SI', -0.3, -0.3, 0.3, '20 a 24', 'ACCION CIUDADANA'],
-    [0.3, 0.3, -0.3, 'SI', -0.3, 'NO', 'NO', 0.3, 'CON VIVIENDA', 'CON VIVIENDA', 'SI', -0.3, -0.3, 'NO', 'SI', 'SI', 'SI', 'SI', -0.3, 0.3, -0.3, '20 a 30', 'RESTAURACION NACIONAL'],
-    [0.3, 0.3, -0.3, 'NO', -0.3, 'NO', 'NO', 0.3, 'SIN VIVIENDA', 'SIN VIVIENDA', 'SI', 0.3, 0.3, 'NO', 'SI', 'SI', 'SI', 'SI', -0.3, 0.3, -0.3, '20 a 24', 'ACCION CIUDADANA'],
-    [0.3, -0.3, 0.3, 'SI', 0.3, 'NO', 'NO', -0.3, 'CON VIVIENDA', 'CON VIVIENDA', 'SI', 0.3, 0.3, 'NO', 'SI', 'SI', 'SI', 'SI', 0.3, -0.3, -0.3, '20 a 60', 'RESTAURACION NACIONAL'],
-    [-0.3, -0.3, 0.3, 'NO', 0.3, 'NO', 'NO', -0.3, 'SIN VIVIENDA', 'SIN VIVIENDA', 'SI', 0.3, -0.3, 'NO', 'SI', 'SI', 'SI', 'SI', 0.3, -0.3, 0.3, '20 a 24', 'ACCION CIUDADANA'],
-    [-0.3, -0.3, 0.3, 'SI', 0.3, 'NO', 'NO', -0.3, 'CON VIVIENDA', 'CON VIVIENDA', 'SI', -0.3, 0.3, 'NO', 'SI', 'SI', 'SI', 'SI', 0.3, -0.3, -0.3, '20 a 30', 'RESTAURACION NACIONAL'],
-    [-0.3, 0.3, -0.3, 'NO', -0.3, 'NO', 'NO', 0.3, 'CON VIVIENDA', 'SIN VIVIENDA', 'SI', -0.3, -0.3, 'NO', 'SI', 'SI', 'SI', 'SI', -0.3, -0.3, 0.3, '20 a 24', 'ACCION CIUDADANA'],
-    
-
-]
-"""
+from g05 import datos_r1_normalizados, datos_r2_normalizados, datos_r2_con_r1_normalizados
+from pc1 import generar_muestra_pais, generar_muestra_provincia
+import numpy as np
 
 
-
-# con estos datos de entrenamiento, se pretende crear un árbol de decisión
-c_entrenamiento = [
-    ['young', 'myope', 'no', 'reduced', 'none'],
-    ['young', 'myope', 'no', 'normal', 'soft'],
-    ['young', 'myope', 'yes', 'reduced', 'none'],
-    ['young', 'myope', 'yes', 'normal', 'hard'],
-    ['young', 'hypermyope', 'no', 'reduced', 'none'],
-    ['young', 'hypermyope', 'no', 'normal', 'soft'],
-    ['young', 'hypermyope', 'yes', 'reduced', 'none'],
-    ['young', 'hypermyope', 'yes', 'normal', 'hard'],
-    ['pre-pre', 'myope', 'no', 'reduced', 'none'],
-    ['pre-pre', 'myope', 'no', 'normal', 'soft'],
-    ['pre-pre', 'myope', 'yes', 'reduced', 'none'],
-    ['pre-pre', 'myope', 'yes', 'normal', 'hard'],
-    ['pre-pre', 'hypermyope', 'no', 'reduced', 'none'],
-    ['pre-pre', 'hypermyope', 'no', 'normal', 'soft'],
-    ['pre-pre', 'hypermyope', 'yes', 'reduced', 'none'],
-    ['pre-pre', 'hypermyope', 'yes', 'normal', 'none'],
-    ['pre', 'myope', 'no', 'reduced', 'none'],
-    ['pre', 'myope', 'no', 'normal', 'none'],
-    ['pre', 'myope', 'yes', 'reduced', 'none'],
-    ['pre', 'myope', 'yes', 'normal', 'hard'],
-    ['pre', 'hypermyope', 'no', 'reduced', 'none'],
-    ['pre', 'hypermyope', 'no', 'normal', 'soft'],
-    ['pre', 'hypermyope', 'yes', 'reduced', 'none'],
-    ['pre', 'hypermyope', 'yes', 'normal', 'none'],
-    
-
-
-]
-
-
-"""
-
-c_entrenamiento = [
-    ['young', 'myope', 'no', 'reduced', 'none'],
-    ['young', 'myope', 'no', 'normal', 'none'],
-    ['young', 'myope', 'yes', 'reduced', 'none'],
-    ['young', 'myope', 'yes', 'normal', 'none'],
-    ['young', 'hypermyope', 'no', 'reduced', 'none'],
-    ['young', 'hypermyope', 'no', 'normal', 'none'],
-    ['young', 'hypermyope', 'yes', 'reduced', 'none'],
-    ['young', 'hypermyope', 'yes', 'normal', 'none'],
-    ['pre-pre', 'myope', 'no', 'reduced', 'none'],
-    ['pre-pre', 'myope', 'no', 'normal', 'none'],
-    ['pre-pre', 'myope', 'yes', 'reduced', 'none'],
-    ['pre-pre', 'myope', 'yes', 'normal', 'none'],
-    ['pre-pre', 'hypermyope', 'no', 'reduced', 'none'],
-    ['pre-pre', 'hypermyope', 'no', 'normal', 'nonee'],
-    ['pre-pre', 'hypermyope', 'yes', 'reduced', 'none'],
-    ['pre-pre', 'hypermyope', 'yes', 'normal', 'none'],
-    ['pre', 'myope', 'no', 'reduced', 'none'],
-    ['pre', 'myope', 'no', 'normal', 'none'],
-    ['pre', 'myope', 'yes', 'reduced', 'none'],
-    ['pre', 'myope', 'yes', 'normal', 'none'],
-    ['pre', 'hypermyope', 'no', 'reduced', 'none'],
-    ['pre', 'hypermyope', 'no', 'normal', 'none'],
-    ['pre', 'hypermyope', 'yes', 'reduced', 'none'],
-    ['pre', 'hypermyope', 'yes', 'normal', 'none'],
-    
-
-
-]
-"""
-
-"""
-conjunto_entrenamiento = [
-    ['sunny', 'hot', 'high', 'false', 'no'],
-    ['sunny', 'hot', 'high', 'true', 'no'],
-    ['overcast', 'hot', 'high', 'false', 'yes'],
-    ['rainy', 'mild', 'high', 'false', 'yes'],
-    ['rainy', 'cool', 'normal', 'false', 'yes'],
-    ['rainy', 'cool', 'normal', 'true', 'no'],
-    ['overcast', 'cool', 'normal', 'true', 'yes'],
-    ['sunny', 'mild', 'high', 'false', 'no'],
-    ['sunny', 'cool', 'normal', 'false', 'yes'],
-    ['rainy', 'mild', 'normal', 'false', 'yes'],
-    ['sunny', 'mild', 'normal', 'true', 'yes'],
-    ['overcast', 'mild', 'high', 'true', 'yes'],
-    ['overcast', 'hot', 'normal', 'false', 'yes'],
-    ['rainy', 'mild', 'high', 'true', 'no']
-
-]
-"""
-
-#será útil para uno de los casos de los árboles de decisión, guardará los índice de los atributos de mayor utilidad
+# será útil para uno de los casos de los árboles de decisión, guardará los
+# índice de los atributos de mayor utilidad
 atributos_utilizados = []
 encabezados = []
+c_entrenamiento = []
+c_pruebas = []
+columnas_mayor_ocho = []
 
-#c_entrenamiento = [['young', 'myope', 'no', 'normal', 'soft'], ['young', 'myope', 'yes', 'normal', 'hard'], ['young', 'hypermyope', 'no', 'normal', 'soft'], ['young', 'hypermyope', 'yes', 'normal', 'hard'], ['pre-pre', 'myope', 'no', 'normal', 'soft'], ['pre-pre', 'myope', 'yes', 'normal', 'hard'], ['pre-pre', 'hypermyope', 'no', 'normal', 'soft'], ['pre-pre', 'hypermyope', 'yes', 'normal', 'none'], ['pre', 'myope', 'no', 'normal', 'none'], ['pre', 'myope', 'yes', 'normal', 'hard'], ['pre', 'hypermyope', 'no', 'normal', 'soft'], ['pre', 'hypermyope', 'yes', 'normal', 'none']]
 
-# estos valores representan el valor de cada columna
-#encabezados = ['color', 'diámetro', 'valor']
 
 # esta función devuelve una lista, que consiste en los valores para la
 # columna que se le pase como parámetro
@@ -165,6 +46,7 @@ def retornar_indice_valores(valores, valor):
 # función que recibe como parámetro el conjunto de entrenamiento, retorna
 # la cantidad que hay de cada valor (última columna)
 
+
 def contar_valores_conjunto_entrenamiento(conjunto_entrenamiento):
     valores = []
     cantidad_por_valor = []
@@ -180,13 +62,18 @@ def contar_valores_conjunto_entrenamiento(conjunto_entrenamiento):
             cantidad_por_valor.append(1)
     return valores, cantidad_por_valor
 
-#función que recibe como parámetro un valor, retornará si dicho valor es numérico o no
+# función que recibe como parámetro un valor, retornará si dicho valor es
+# numérico o no
+
 
 def es_numerico(valor):
-    #isinstance es una función que puede evaluar el tipo de dato de una variable
+    # isinstance es una función que puede evaluar el tipo de dato de una
+    # variable
     return isinstance(valor, int) or isinstance(valor, float)
 
-#función encargada de obtener el tamaño de las columnas de los datos de entrenamiento
+# función encargada de obtener el tamaño de las columnas de los datos de
+# entrenamiento
+
 
 def obtener_tamano_columna_datos_entrenamiento(datos_entrenamiento):
     numero_columnas_retorno = len(datos_entrenamiento[0])
@@ -197,46 +84,42 @@ def obtener_tamano_columna_datos_entrenamiento(datos_entrenamiento):
             numero_columnas_retorno = len(fila)
     return numero_columnas_retorno
 
-#función encargada de obtener el tamaño de las filas de los datos de entrenamiento
+# función encargada de obtener el tamaño de las filas de los datos de
+# entrenamiento
+
 
 def obtener_tamano_filas_datos_entrenamiento(datos_entrenamiento):
     return len(datos_entrenamiento)
 
-#función que dado el valor de una columna, retorna todas las filas que contengan ese valor
+# función que dado el valor de una columna, retorna todas las filas que
+# contengan ese valor
 
-def obtener_filas_por_valor_columna(datos_entrenamiento, valor_columna, columna):
+
+def obtener_filas_por_valor_columna(
+        datos_entrenamiento,
+        valor_columna,
+        columna):
     valor_retorno = []
     for fila in datos_entrenamiento:
         if valor_columna == fila[columna]:
             valor_retorno.append(fila)
     return valor_retorno
 
-#función que, dado un conjunto, obtendrá las filas por categorías, dados los valores del conjunto
+# función que, dado un conjunto, obtendrá las filas por categorías, dados
+# los valores del conjunto
+
 
 def obtener_filas_para_conjunto(datos_entrenamiento, conjunto, columna):
     filas = []
     for elemento in conjunto:
-        lista = obtener_filas_por_valor_columna(datos_entrenamiento, elemento, columna)
+        lista = obtener_filas_por_valor_columna(
+            datos_entrenamiento, elemento, columna)
         filas.append(lista)
-        #contar_valores_conjunto_entrenamiento(lista)
+        # contar_valores_conjunto_entrenamiento(lista)
     return filas
 
 
-#XXXXfunción que separa los valores mayores a 0 y menores que 1 y los valores menores que 0 y mayores que -1
-
-def obtener_filas_para_normalizado(datos_entrenamiento, columna):
-    filas_menor_cero = []
-    filas_mayor_cero = []
-    for fila in datos_entrenamiento:
-        if fila[columna] > 0 and fila[columna] <= 1:
-            filas_mayor_cero.append(fila)
-        else:
-            filas_menor_cero.append(fila)
-    contar_valores_conjunto_entrenamiento(filas_mayor_cero)
-    
-
-
-#función que determina si toda una columna es numérica o no
+# función que determina si toda una columna es numérica o no
 
 def es_columna_numerica(datos_entrenamiento, columna):
     for fila in datos_entrenamiento:
@@ -245,122 +128,113 @@ def es_columna_numerica(datos_entrenamiento, columna):
     return True
 
 
-#función encargada de obtener el valor de entropía, mediante la fórmula
+# función encargada de obtener el valor de entropía, mediante la fórmula
 def obtener_entropia_conjunto_entrenamiento_formula(probabilidades):
     resultado_entropia = 0
     for probabilidad in probabilidades:
-        resultado_entropia -= probabilidad*math.log2(probabilidad)    
+        resultado_entropia -= probabilidad * math.log2(probabilidad)
     return resultado_entropia
-        
 
 
 def obtener_entropia_conjunto_entrenamiento(entrenamiento):
-    
-    #obtiene la cantidad de votos para cada partido
-    valores_etiquetas, votos_etiqueta = contar_valores_conjunto_entrenamiento(entrenamiento)
-    #obtiene la cantidad de filas que tiene el conjunto de entrenamiento
+
+    # obtiene la cantidad de votos para cada partido
+    valores_etiquetas, votos_etiqueta = contar_valores_conjunto_entrenamiento(
+        entrenamiento)
+    # obtiene la cantidad de filas que tiene el conjunto de entrenamiento
     cantidad_filas = obtener_tamano_filas_datos_entrenamiento(entrenamiento)
-    
-    #se obtienen las probabilidades de voto para cada partido
+
+    # se obtienen las probabilidades de voto para cada partido
     probabilidades_etiquetas = []
     tamano_votos_etiqueta = len(votos_etiqueta)
     for i in range(tamano_votos_etiqueta):
         probabilidad = votos_etiqueta[i] / cantidad_filas
         probabilidades_etiquetas.append(probabilidad)
-    
-    entropia = obtener_entropia_conjunto_entrenamiento_formula(probabilidades_etiquetas)
+
+    entropia = obtener_entropia_conjunto_entrenamiento_formula(
+        probabilidades_etiquetas)
     return entropia
-
-
 
 
 def obtener_probabilidades_fila(fila, largo_fila):
     resultado = []
-    valores_etiquetas, votos_etiqueta = contar_valores_conjunto_entrenamiento(fila)
+    valores_etiquetas, votos_etiqueta = contar_valores_conjunto_entrenamiento(
+        fila)
     for i in votos_etiqueta:
-        resultado.append(i/largo_fila)
+        resultado.append(i / largo_fila)
     return resultado
+
 
 def resultado_logaritmo_probabilidad(probabilidades):
     resultado = 0
     for i in probabilidades:
-        resultado-=i*math.log2(i)
+        resultado -= i * math.log2(i)
     return resultado
 
-    
+
 def obtener_ganancia_columna(filas_conjunto, datos_entrenamiento, entropia):
-    #se obtiene el número total de filas del conjunto de entrenamiento
-    numero_filas = obtener_tamano_filas_datos_entrenamiento(datos_entrenamiento)
+    # se obtiene el número total de filas del conjunto de entrenamiento
+    numero_filas = obtener_tamano_filas_datos_entrenamiento(
+        datos_entrenamiento)
     resultado = 0
     for i in filas_conjunto:
         numero_filas_fila = len(i)
-        probabilidad_fila = numero_filas_fila/numero_filas
-        
+        probabilidad_fila = numero_filas_fila / numero_filas
+
         probabilidades = obtener_probabilidades_fila(i, numero_filas_fila)
         resultado_logaritmo = resultado_logaritmo_probabilidad(probabilidades)
 
-        resultado+=probabilidad_fila*resultado_logaritmo
+        resultado += probabilidad_fila * resultado_logaritmo
 
         #probabilidades_fila = obtener_probabilidades_fila
-    ganancia = entropia-resultado
+    ganancia = entropia - resultado
     return ganancia
 
 
-#función encargada de recorrer las columnas de los datos de entrenamiento
+# función encargada de recorrer las columnas de los datos de entrenamiento
 
 def recorrer_columnas_datos_entrenamiento(datos_entrenamiento):
-    #primero, se obtiene la entropía
+    # primero, se obtiene la entropía
     entropia = obtener_entropia_conjunto_entrenamiento(datos_entrenamiento)
-    #luego, se obtiene el número de columnas del conjunto de entrenamiento para recorrerlas
-    numero_columnas = obtener_tamano_columna_datos_entrenamiento(datos_entrenamiento)
-    #recorriendo las columnas del conjunto de entramiento
+    # luego, se obtiene el número de columnas del conjunto de entrenamiento
+    # para recorrerlas
+    numero_columnas = obtener_tamano_columna_datos_entrenamiento(
+        datos_entrenamiento)
+    # recorriendo las columnas del conjunto de entramiento
 
     ganancia_por_columna = []
-    for i in range(numero_columnas-1):
+    for i in range(numero_columnas - 1):
         conjunto_fila_valores_diferentes = {}
-        #se obtienen los valores diferentes que se pueden categorizar para la columna actual
-        conjunto_fila_valores_diferentes = valores_unicos_por_columna(datos_entrenamiento, i)
-        #se obtienen todas las filas que se relacionan con los valores categóricos obtenidos anteriormente
-        filas_conjunto = obtener_filas_para_conjunto(datos_entrenamiento, conjunto_fila_valores_diferentes, i)
-        #se obtiene la ganancia para la columna actual
-        ganancia = obtener_ganancia_columna(filas_conjunto, datos_entrenamiento, entropia)
+        # se obtienen los valores diferentes que se pueden categorizar para la
+        # columna actual
+        conjunto_fila_valores_diferentes = valores_unicos_por_columna(
+            datos_entrenamiento, i)
+        # se obtienen todas las filas que se relacionan con los valores
+        # categóricos obtenidos anteriormente
+        filas_conjunto = obtener_filas_para_conjunto(
+            datos_entrenamiento, conjunto_fila_valores_diferentes, i)
+        # se obtiene la ganancia para la columna actual
+        ganancia = obtener_ganancia_columna(
+            filas_conjunto, datos_entrenamiento, entropia)
         ganancia_por_columna.append(ganancia)
     return ganancia_por_columna
-        
-       
-    """
-    numero_columnas = obtener_tamano_columna_datos_entrenamiento(datos_entrenamiento)
-    for i in range(numero_columnas):
-        conjunto_fila_valores_diferente = {}
 
-        #si la columna es numérica, los valores se tomarán por rangos
+# función encargada de obtener el índice de la columna que genera más ganancia
 
-        #if(es_columna_numerica(conjunto_entrenamiento, i)):
-        #    obtener_filas_para_normalizado(conjunto_entrenamiento, i)
-            
-        #caso contrario, los valores se clasificarán por los posibles valores que tomará la columna
-
-        #else:
-        conjunto_fila_valores_diferente = valores_unicos_por_columna(datos_entrenamiento, i)
-        print(conjunto_fila_valores_diferente)
-        print("\n\n\n")
-        obtener_filas_para_conjunto(conjunto_entrenamiento, conjunto_fila_valores_diferente, i)
-    """
-
-
-#función encargada de obtener el índice de la columna que genera más ganancia
 
 def obtener_indice_maximo(ganancias):
     indice = 0
     maximo = ganancias[0]
     tamano_ganancias = len(ganancias)
     for i in range(1, tamano_ganancias):
-        if ganancias[i]>maximo:
+        if ganancias[i] > maximo:
             maximo = ganancias[i]
             indice = i
     return indice
 
-#función encargada de definir si un nodo es o no una hoja, de acuerdo a los target que obtiene
+# función encargada de definir si un nodo es o no una hoja, de acuerdo a
+# los target que obtiene
+
 
 def es_nodo_hoja(valores, cantidad_por_valor):
     if len(valores) == 1 and len(cantidad_por_valor) == 1:
@@ -368,7 +242,8 @@ def es_nodo_hoja(valores, cantidad_por_valor):
     else:
         return False
 
-#función que indica si una lista de ganancias no aporta
+# función que indica si una lista de ganancias no aporta
+
 
 def es_ganancia_cero(ganancias):
     for i in ganancias:
@@ -376,7 +251,8 @@ def es_ganancia_cero(ganancias):
             return False
     return True
 
-#función encargada de retornar el valor de un target
+# función encargada de retornar el valor de un target
+
 
 def retornar_target(filas):
     fila_actual = filas[0][-1]
@@ -393,6 +269,7 @@ def obtener_max_lista(valores, cantidad_por_valor):
             indice_devolver = i
     return valores[indice_devolver]
 
+
 def obtener_pluralidad(filas):
     valores = []
     cantidad_por_valor = []
@@ -407,7 +284,8 @@ def obtener_pluralidad(filas):
             valores.append(valor)
             cantidad_por_valor.append(1)
     return obtener_max_lista(valores, cantidad_por_valor)
-    
+
+
 def son_todos_target_iguales(filas):
     largo = len(filas)
     target = filas[0][-1]
@@ -416,13 +294,16 @@ def son_todos_target_iguales(filas):
             return False
     return True
 
+
 def obtener_lista_atributos_utilizados():
     lista_retorno = []
     for i in atributos_utilizados:
         lista_retorno.append(i.nombre)
     return lista_retorno
 
-#función encargada de devolver las ganancias que se pueden utilizar para 
+# función encargada de devolver las ganancias que se pueden utilizar para
+
+
 def reducir_ganancias_por_atributos_utilizados(ganancias):
     respuesta_ganancias = []
     respuesta_encabezados = []
@@ -438,37 +319,48 @@ def reducir_ganancias_por_atributos_utilizados(ganancias):
 def obtener_indice_encabezado(nombre):
     return encabezados.index(nombre)
 
-def armar_arbol(conjunto_entrenamiento, filas_padre):
 
-    #caso 1, se pregunta si quedan ejemplos disponibles para este camino
+def obtener_filas_mayores_menores_cero(conjunto, columna):
+    mayores = []
+    menores = []
+    for i in conjunto:
+        if i[columna] > 0:
+            mayores.append(i)
+        elif i[columna] < 0:
+            menores.append(i)
+    return mayores, menores
+
+
+def armar_arbol(conjunto_entrenamiento, filas_padre):
+    tipo_nodo = 0
+    # caso 1, se pregunta si quedan ejemplos disponibles para este camino
     if conjunto_entrenamiento == []:
-        #generar hoja aquí
         target = obtener_pluralidad(filas_padre)
         hoja = Hoja(target)
         return hoja
     else:
-        #caso 2, todos los target son iguales para el conjunto de entrenamiento
+        # caso 2, todos los target son iguales para el conjunto de
+        # entrenamiento
         if(son_todos_target_iguales(conjunto_entrenamiento)):
             target = retornar_target(conjunto_entrenamiento)
             hoja = Hoja(target)
             return hoja
-            #generar hoja aquí
-            
+
         else:
 
-            #hacer split
-            #1.obtener las ganancias para cada columna
-            ganancias_por_columna = recorrer_columnas_datos_entrenamiento(conjunto_entrenamiento)
-            ganancias_permitidas, encabezados_permitidos = reducir_ganancias_por_atributos_utilizados(ganancias_por_columna)
-            print("ganancias permitidas")
-            print(ganancias_permitidas)
-            #ganancias_permitidas = []
-            #2.ver si quedan atributos disponibles para hacer split
+            # hacer split
+            # 1.obtener las ganancias para cada columna
+            ganancias_por_columna = recorrer_columnas_datos_entrenamiento(
+                conjunto_entrenamiento)
+            ganancias_permitidas, encabezados_permitidos = reducir_ganancias_por_atributos_utilizados(
+                ganancias_por_columna)
+            # 2.ver si quedan atributos disponibles para hacer split
             if ganancias_permitidas == []:
+                #print("ya no hay atributos, pluralidad ejemplos")
                 target = obtener_pluralidad(conjunto_entrenamiento)
                 hoja = Hoja(target)
                 return hoja
-                #crear una hoja aquí
+                # crear una hoja aquí
             else:
                 hijos = []
                 indice_maximo = obtener_indice_maximo(ganancias_permitidas)
@@ -481,55 +373,175 @@ def armar_arbol(conjunto_entrenamiento, filas_padre):
                 indice_nodo = obtener_indice_encabezado(encabezado_nodo)
 
                 atributos_utilizados.append(atributo)
-                conjunto_fila_valores_diferentes = valores_unicos_por_columna(conjunto_entrenamiento, indice_maximo)
+                conjunto_fila_valores_diferentes = valores_unicos_por_columna(
+                    conjunto_entrenamiento, indice_nodo)
 
-                for i in conjunto_fila_valores_diferentes:
-                    #para cada valor, se obtienen las filas que cumplen con esta característica en la columna especificada
-                    filas_elemento = obtener_filas_por_valor_columna(conjunto_entrenamiento, i, indice_maximo)
-                    #se llama de nuevo a la función, con los elementos del nuevo camino y los elementos del padre
-                    nodo = armar_arbol(filas_elemento, conjunto_entrenamiento)
-                    hijos.append(nodo)
-                nodo = Nodo(hijos, indice_nodo, conjunto_fila_valores_diferentes, ganancias_permitidas[indice_maximo])
+                # si se aporta gran cantidad de valores para un atributo, se
+                # evaluará si es mayor o menor a 0
+                if indice_nodo in columnas_mayor_ocho:
+                    mayores, menores = obtener_filas_mayores_menores_cero(
+                        conjunto_entrenamiento, indice_nodo)
+                    nodo_mayores = armar_arbol(mayores, conjunto_entrenamiento)
+                    nodo_menores = armar_arbol(menores, conjunto_entrenamiento)
+                    hijos.append(nodo_mayores)
+                    hijos.append(nodo_menores)
+
+                else:
+                    tipo_nodo = 1
+                    for i in conjunto_fila_valores_diferentes:
+                        # para cada valor, se obtienen las filas que cumplen
+                        # con esta característica en la columna especificada
+                        filas_elemento = obtener_filas_por_valor_columna(
+                            conjunto_entrenamiento, i, indice_nodo)
+                        # se llama de nuevo a la función, con los elementos del
+                        # nuevo camino y los elementos del padre
+                        nodo = armar_arbol(
+                            filas_elemento, conjunto_entrenamiento)
+                        hijos.append(nodo)
+                nodo = Nodo(
+                    hijos,
+                    indice_nodo,
+                    conjunto_fila_valores_diferentes,
+                    ganancias_permitidas[indice_maximo],
+                    tipo_nodo)
                 return nodo
-        
 
 
 def generar_header_conjunto_entrenamiento(conjunto_entrenamiento):
     tamano = len(conjunto_entrenamiento[0])
-    for i in range(tamano-1):
-        encabezado = "Atributo: "+str(i)
+    for i in range(tamano - 1):
+        encabezado = "Atributo: " + str(i)
         encabezados.append(encabezado)
     return encabezados
-    
-
 
 
 def recorrer_arbol(arbol):
     if(isinstance(arbol, Nodo)):
-        #print("recorriendo hijos")
-        print(arbol.valores_columna)
-        print(arbol.ganancia)
-        #print(arbol.hijos)
 
-            
         for i in arbol.hijos:
             recorrer_arbol(i)
     elif(isinstance(arbol, Hoja)):
-        print("")
-        #print(arbol.target)
+        print(arbol.target)
 
-def generar_arbol():
+
+def imprimir_columna(datos, columna):
+    lista = []
+    for i in datos:
+        lista.append(i[columna])
+    return lista
+
+
+def obtener_valor_porcentaje_pruebas(n):
+    return int(round(n * 0.25))
+
+
+def partir_datos_entrenamiento_prueba(
+        datos,
+        cantidad_entrenamiento,
+        cantidad_prueba):
+    datos_entrenamiento = []
+    datos_prueba = []
+    for i in range(cantidad_entrenamiento):
+        datos_entrenamiento.append(datos[i])
+    for i in range(
+            cantidad_entrenamiento,
+            cantidad_entrenamiento +
+            cantidad_prueba):
+        datos_prueba.append(datos[i])
+    return datos_entrenamiento, datos_prueba
+
+
+def generar_arbol(n):
+
+    cantidad_datos_prueba = obtener_valor_porcentaje_pruebas(n)
+    cantidad_datos_entrenamiento = n - cantidad_datos_prueba
+    print(cantidad_datos_entrenamiento)
+    print(cantidad_datos_prueba)
+    muestra = generar_muestra_pais(n)
+    data = datos_r1_normalizados(muestra)
+    data = np.array(data).tolist()
+
+    datos_entrenamiento, datos_prueba = partir_datos_entrenamiento_prueba(
+        data, cantidad_datos_entrenamiento, cantidad_datos_prueba)
+    c_entrenamiento = datos_entrenamiento
+    c_pruebas = datos_prueba
+
+    # se agregan los índices de los a tributos que aportan más de 8 opciones
+    tamano = len(data[0])
+
+    for i in range(tamano - 1):
+        datos = imprimir_columna(data, i)
+        datos_conjunto = set(datos)
+        if len(datos_conjunto) >= 8:
+            columnas_mayor_ocho.append(i)
+
     generar_header_conjunto_entrenamiento(c_entrenamiento)
-    print (obtener_indice_encabezado("Atributo: 0"))
-    
-    #print(encabezados)
     arbol = armar_arbol(c_entrenamiento, c_entrenamiento)
-    recorrer_arbol(arbol)
+    return arbol, c_pruebas
 
-generar_arbol()
-#print(generar_header_conjunto_entrenamiento(c_entrenamiento))
-#arbol = armar_arbol(c_entrenamiento, c_entrenamiento)
-#print(arbol.target)
-#print(recorrer_columnas_datos_entrenamiento(conjunto_entrenamiento))
 
-#armar_arbol(c_entrenamiento, c_entrenamiento))
+def obtener_indice_conjunto(conjunto, valor):
+    retorno = 0
+    for i in conjunto:
+        if i == valor:
+            return retorno
+        else:
+            retorno += 1
+
+
+def predecir(c_pruebas, arbol):
+    predicciones = []
+    valores_reales = []
+    for i in c_pruebas:
+        prediccion = predecir_aux(i, arbol)
+        valores_reales.append(i[-1])
+        predicciones.append(prediccion)
+    return predicciones, valores_reales
+
+
+def predecir_aux(fila, arbol):
+    if isinstance(arbol, Nodo):
+        columna = arbol.columna
+        valor = fila[columna]
+        conjunto = arbol.valores_columna
+        if arbol.tipo == 0:
+            if valor > 0:
+                return predecir_aux(fila, arbol.hijos[0])
+            elif valor < 0:
+                return predecir_aux(fila, arbol.hijos[1])
+        elif arbol.tipo == 1:
+            indice = obtener_indice_conjunto(conjunto, valor)
+            return predecir_aux(fila, arbol.hijos[indice])
+    elif isinstance(arbol, Hoja):
+        return arbol.target
+
+
+def obtener_precision(verdaderos_positivos, falsos_positivos):
+    return (verdaderos_positivos / (verdaderos_positivos + falsos_positivos))
+
+
+def obtener_verdaderos_falsos_positivos(predicciones, reales):
+    tamano = len(predicciones)
+    verdaderos_positivos = 0
+    falsos_positivos = 0
+    for i in range(tamano):
+        if predicciones[i] == reales[i]:
+            verdaderos_positivos += 1
+        else:
+            falsos_positivos += 1
+    return verdaderos_positivos, falsos_positivos
+
+
+def funcion_principal():
+    arbol, c_pruebas = generar_arbol(10000)
+    predicciones, valores_reales = predecir(c_pruebas, arbol)
+    verdaderos_positivos, falsos_positivos = obtener_verdaderos_falsos_positivos(
+        predicciones, valores_reales)
+    print(verdaderos_positivos)
+    print(falsos_positivos)
+    precision = obtener_precision(verdaderos_positivos, falsos_positivos)
+    print(precision)
+    print(precision)
+
+
+funcion_principal()
