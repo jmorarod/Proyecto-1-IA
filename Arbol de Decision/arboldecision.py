@@ -39,6 +39,7 @@ c_entrenamiento = [
 """
 
 
+
 # con estos datos de entrenamiento, se pretende crear un árbol de decisión
 c_entrenamiento = [
     ['young', 'myope', 'no', 'reduced', 'none'],
@@ -428,7 +429,7 @@ def reducir_ganancias_por_atributos_utilizados(ganancias):
     atributos = obtener_lista_atributos_utilizados()
     tamano = len(ganancias)
     for i in range(tamano):
-        if i not in atributos:
+        if encabezados[i] not in atributos:
             respuesta_ganancias.append(ganancias[i])
             respuesta_encabezados.append(encabezados[i])
     return respuesta_ganancias, respuesta_encabezados
@@ -459,7 +460,8 @@ def armar_arbol(conjunto_entrenamiento, filas_padre):
             #1.obtener las ganancias para cada columna
             ganancias_por_columna = recorrer_columnas_datos_entrenamiento(conjunto_entrenamiento)
             ganancias_permitidas, encabezados_permitidos = reducir_ganancias_por_atributos_utilizados(ganancias_por_columna)
-                
+            print("ganancias permitidas")
+            print(ganancias_permitidas)
             #ganancias_permitidas = []
             #2.ver si quedan atributos disponibles para hacer split
             if ganancias_permitidas == []:
@@ -505,13 +507,16 @@ def generar_header_conjunto_entrenamiento(conjunto_entrenamiento):
 def recorrer_arbol(arbol):
     if(isinstance(arbol, Nodo)):
         #print("recorriendo hijos")
-        print(arbol.hijos)
+        print(arbol.valores_columna)
+        print(arbol.ganancia)
+        #print(arbol.hijos)
+
             
         for i in arbol.hijos:
             recorrer_arbol(i)
     elif(isinstance(arbol, Hoja)):
-        #print("esto es una hoja")
-        print(arbol.target)
+        print("")
+        #print(arbol.target)
 
 def generar_arbol():
     generar_header_conjunto_entrenamiento(c_entrenamiento)
