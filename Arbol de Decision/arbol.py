@@ -1,8 +1,9 @@
 class Nodo:
-    def __init__(self, hijos, columna, valores_columna, ganancia, tipo):
+    def __init__(self, hijos, columna, valores_columna, ganancia, tipo, filas):
         self.hijos = hijos
         self.columna = columna
         self.valores_columna = valores_columna
+        self.filas = filas
         self.ganancia = ganancia
         self.tipo = tipo
 

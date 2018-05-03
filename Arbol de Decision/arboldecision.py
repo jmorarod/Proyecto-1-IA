@@ -403,7 +403,8 @@ def armar_arbol(conjunto_entrenamiento, filas_padre):
                     indice_nodo,
                     conjunto_fila_valores_diferentes,
                     ganancias_permitidas[indice_maximo],
-                    tipo_nodo)
+                    tipo_nodo,
+                    conjunto_entrenamiento)
                 return nodo
 
 
@@ -417,7 +418,9 @@ def generar_header_conjunto_entrenamiento(conjunto_entrenamiento):
 
 def recorrer_arbol(arbol):
     if(isinstance(arbol, Nodo)):
-
+        print(arbol.ganancia)
+        if es_nodo_con_hojas(arbol):
+            print("SHIIIII")
         for i in arbol.hijos:
             recorrer_arbol(i)
     elif(isinstance(arbol, Hoja)):
@@ -458,8 +461,11 @@ def generar_arbol(n):
     print(cantidad_datos_entrenamiento)
     print(cantidad_datos_prueba)
     muestra = generar_muestra_pais(n)
-    data = datos_r1_normalizados(muestra)
+    #data = datos_r1_normalizados(muestra)
+    #data = datos_r2_normalizados(muestra)
+    data = datos_r2_con_r1_normalizados(muestra)
     data = np.array(data).tolist()
+        
 
     datos_entrenamiento, datos_prueba = partir_datos_entrenamiento_prueba(
         data, cantidad_datos_entrenamiento, cantidad_datos_prueba)
@@ -532,6 +538,53 @@ def obtener_verdaderos_falsos_positivos(predicciones, reales):
     return verdaderos_positivos, falsos_positivos
 
 
+def es_nodo_con_hojas(arbol):
+    for i in arbol.hijos:
+        if not isinstance(i, Hoja):
+            return False
+    return True
+
+
+def podar_arbol(arbol, umbral):
+    if isinstance(arbol, Nodo):
+        if es_nodo_con_hojas(arbol):
+            print("HOJAAAAAAAAAAS")
+            print(arbol.ganancia)
+            if arbol.ganancia < umbral:
+                target = obtener_pluralidad(arbol.filas)
+                hoja = Hoja(target)
+                return hoja
+            else:
+                return arbol
+        else:
+            tamano = len(arbol.hijos)
+            hijos = []
+            for i in range(tamano):
+                print("hijo original")
+                print(arbol.hijos[i])
+                hijo = podar_arbol(arbol.hijos[i], umbral)
+                print("hijo nuevo")
+                print(hijo)
+                hijos.append(hijo)
+            arbol.hijos = hijos
+            return arbol
+            """
+            if es_nodo_con_hojas(arbol.hijos[i]):
+                if arbol.hijos[i].ganancia < umbral:
+                    target = obtener_pluralidad(arbol.hijos[i].filas)
+                    hoja = Hoja(target)
+                    arbol.hijos[i] = hoja
+            else:
+                podar_arbol(arbol.hijos[i], umbral)
+
+            """
+    elif isinstance(arbol, Hoja):
+        return arbol
+
+    #return arbol
+    #elif(isinstance(arbol, Hoja)):
+    #    print(arbol.target)
+
 def funcion_principal():
     arbol, c_pruebas = generar_arbol(10000)
     predicciones, valores_reales = predecir(c_pruebas, arbol)
@@ -541,7 +594,16 @@ def funcion_principal():
     print(falsos_positivos)
     precision = obtener_precision(verdaderos_positivos, falsos_positivos)
     print(precision)
-    print(precision)
+    arbol_podado = podar_arbol(arbol, 0.08)
+    #arbol_podado2 = podar_arbol(arbol_podado, 0.08)
+    
+    #arbol_podado3 = podar_arbol(arbol_podado2, 0.08)
+    
+    #arbol_podado4 = podar_arbol(arbol_podado3, 0.08)
+    recorrer_arbol(arbol)
+    print("\n\n\n\n\n")
+    recorrer_arbol(arbol_podado)
+    #recorrer_arbol(arbol_podado)
 
 
 funcion_principal()
