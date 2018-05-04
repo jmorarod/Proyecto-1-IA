@@ -16,12 +16,20 @@ Estructura de los nodos que conforman el arbol
 class Node:
 
     def __init__(self, dimension, data):
+        if(type(data) is not list or type(dimension) is not int):
+            raise TypeError('El primer argumento debe ser una lista de'+
+                            'y el segundo un numero entero')
+        
         self.left = None
         self.right = None
         self.dimension = dimension
         self.data = data
 
     def insert_node(self, data, dimension):
+        if(type(data) is not list or type(dimension) is not int):
+            raise TypeError('El primer argumento debe ser una lista de'+
+                            'y el segundo un numero entero')
+        
         if data:
             if data[self.dimension] < self.data[self.dimension]:
                 self.left = Node(dimension, data)
@@ -31,6 +39,9 @@ class Node:
                 return self.right
 
     def insert_leaf(self, data, isMinor):
+        if(type(data) is not list or type(isMinor) is not bool):
+            raise TypeError('El primer argumento debe ser una lista de'+
+                            'y el segundo un boolean')
         if isMinor:
             self.left = Node(-1, data)
         else:
@@ -244,8 +255,16 @@ Restricciones: n y k deben ser enteros y percentage un valor entre 0-100
 
 
 def kd_tree(n, k, percentage):
-    myData = [["datos", "es_entrenamiento", "prediccion_r1",
-               "prediccion_r2", "prediccion_r2_con_r1"]]
+    myData = [['poblacion_canton', 'superficie_canton','densidad_poblacion',
+               'urbano','sexo','dependencia_demografica','ocupa_vivienda',
+               'promedio_ocupantes','vivienda_buen_estado',
+               'vivienda_hacinada','alfabetismo','escolaridad_promedio',
+               'educacion_regular','fuera_fuerza_trabajo',
+               'participacion_fuerza_trabajo','asegurado','extranjero',
+               'discapacidad','no_asegurado', 'porcentaje_jefatura_femenina',
+               'porcentaje_jefatura_compartida', 'edad','voto_primera_ronda',
+               'voto_segunda_ronda','es_entrenamiento', 'prediccion_r1',
+               'prediccion_r2','prediccion_r2_con_r1']]
 
     if(percentage <= 100 and percentage > 0):
         muestra = generar_muestra_pais(n)
@@ -266,7 +285,7 @@ def kd_tree(n, k, percentage):
         print("\nPrediccin_r2")
         myData = kd_tree_aux(data_r2, k, percentage, myData, 1)
         print("\nPrediccin_r1_r2")
-        myData = kd_tree_aux(data_r2_r1, k, percentage, myData, 2)
+        myData = kd_tree_aux(data_r2_r1, k, percentage, myData, 2)      
 
         create_csv(myData)
         print("\nVer archivo 'resultados_kd_tree' para mas información\n")
@@ -368,9 +387,27 @@ Restricciones: myData debe un arreglo
 
 
 def create_csv(myData):
+    if(type(myData) is not list):
+        raise TypeError('El argumento debe ser una lista de listas')
+    for i in range(len(myData)):
+        if(type(myData[i]) is not list):
+            raise TypeError('El parametro debe ser una lista de listas')
+        if(i!=0):
+            if(type(myData[i][0]) is not list):
+                raise TypeError('El primer elemento de cada elemento'
+                                'de la lista debe ser una lista')
+            if(len(myData[i][0]) <5):
+                raise AttributeError('El primer elemento de cada elemento de la lista'+
+                                'debe ser una lista de un tamaño mayor a 4')
+        
+    
     file = open('resultados_kd_tree.csv', 'w', newline='')
     salida = csv.writer(file)
-    salida.writerows(myData)
+    salida.writerow(myData[0])
+    for item in myData[1:]:
+        item_aux = item[0]
+        item_aux.extend(item[-4:])
+        salida.writerow(item_aux)
     del salida
     file.close()
 
@@ -386,11 +423,15 @@ Restricciones: point1 y point2 debe ser arreglos de tamaño>1
 
 
 def distance(point1, point2):
+    if(type(point1) is not list or type(point2) is not list):
+        raise TypeError('Los puntos tiene que ser listas')
+
     result = 0
     for i in range(len(point1)-1):
         dx = point1[i]-point2[i]
         result += dx * dx
     return math.sqrt(result)
+
 
 
 # ----------------------------------------------------------------------------
@@ -405,6 +446,13 @@ Restricciones: all_points debe estar en forma de matrix y new_point ser un
 
 
 def closest_point(all_points, new_point):
+    if(type(all_points) is not list or type(new_point) is not list):
+        raise TypeError('El primer argumento debe ser una lista de listas'+
+                        'y el segundo una lista')
+    if(type(all_points[0]) is not list):
+        raise TypeError('El primer argumento debe ser una lista de listas'+
+                        'y el segundo una lista')
+    
     best_point = None
     best_distance = None
 
