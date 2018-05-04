@@ -20,6 +20,23 @@ def split_muestra(muestra, porcentaje):
         else:
             test_set += [muestra[i]]
     return training_set, test_set
+def regresiones_logisticas(n_muestra, porcentaje_test, regularizacion):
+    muestra = generar_muestra_pais(n_muestra)
+    muestra_r1 = datos_r1_normalizados(muestra)
+    muestra_r2 = datos_r2_normalizados(muestra)
+    muestra_r2_r1 = datos_r2_con_r1_normalizados(muestra)
+    train_r1, test_r1 = split_muestra(muestra_r1, porcentaje_test)
+    train_r2, test_r2 = split_muestra(muestra_r2, porcentaje_test)
+    train_r2_r1, test_r2_r1 = split_muestra(muestra_r2_r1, porcentaje_test)
+    predicciones_train_r1, predicciones_test_r1 = regresion_logistica_r1(train_r1, test_r1, 5000/n_muestra, regularizacion)
+    predicciones_train_r2, predicciones_test_r2 = regresion_logistica(train_r2, test_r2, 5000/n_muestra, regularizacion)
+    predicciones_train_r2_r1, predicciones_test_r2_r1 = regresion_logistica(train_r2_r1, test_r2_r1, 5000/n_muestra, regularizacion,True)
+    for i in range(0, len(train_r1)):
+        muestra[i] += [True, predicciones_train_r1[i]+1,predicciones_train_r2[i]+1,predicciones_train_r2_r1[i]+1]
+    for i in range(0, len(test_r1)):
+        muestra[i+len(train_r1)] += [False, predicciones_test_r1[i]+1,predicciones_test_r2[i]+1,predicciones_test_r2_r1[i]+1]
+    dataframe = pd.DataFrame(muestra,columns=['poblacion_canton', 'superficie_canton','densidad_poblacion','urbano','sexo','dependencia_demografica','ocupa_vivienda','promedio_ocupantes','vivienda_buen_estado', 'vivienda_hacinada','alfabetismo','escolaridad_promedio','educacion_regular','fuera_fuerza_trabajo','participacion_fuerza_trabajo','asegurado','extranjero','discapacidad','no_asegurado', 'porcentaje_jefatura_femenina','porcentaje_jefatura_compartida', 'edad','voto_primera_ronda','voto_segunda_ronda','es_entrenamiento', 'prediccion_r1', 'prediccion_r2','prediccion_r2_con_r1'])
+    dataframe.to_csv('resultados_regresion_logisitica.csv',index=False)
 
 def regresion_logistica_r1(train_set, test_set, learning_rate, regularizacion):
     num_epochs = 1500
@@ -83,7 +100,12 @@ def regresion_logistica_r1(train_set, test_set, learning_rate, regularizacion):
         print("Precision en entrenamiento: ", accuracy.eval({x: x_train, y: y_train}))
         print("Error en pruebas: ", cost_test)
         print("Precision en pruebas: ", accuracy.eval({x: x_test, y: y_test}))
+        predicciones_train = y_.eval({x: x_train})
+        predicciones_test = y_.eval({x: x_test})
         sess.close()
+    predicciones_train = convert_from_one_hot(predicciones_train)
+    predicciones_test = convert_from_one_hot(predicciones_test)
+    return predicciones_train, predicciones_test
     
 def regresion_logistica(train_set, test_set, learning_rate, regularizacion, r2_con_r1=False):
     num_epochs = 1500
@@ -150,7 +172,12 @@ def regresion_logistica(train_set, test_set, learning_rate, regularizacion, r2_c
         print("Precision en entrenamiento: ", accuracy.eval({x: x_train, y: y_train}))
         print("Error en pruebas: ", cost_test)
         print("Precision en pruebas: ", accuracy.eval({x: x_test, y: y_test}))
+        predicciones_train = y_.eval({x: x_train})
+        predicciones_test = y_.eval({x: x_test})
         sess.close()
+    predicciones_train = convert_from_one_hot(predicciones_train)
+    predicciones_test = convert_from_one_hot(predicciones_test)
+    return predicciones_train, predicciones_test
 
 
 def redes_neuronales(n_muestra, porcentaje_test, num_capas, unidades_por_capa, activacion):
@@ -165,12 +192,12 @@ def redes_neuronales(n_muestra, porcentaje_test, num_capas, unidades_por_capa, a
     predicciones_train_r2, predicciones_test_r2 = red_neuronal_r2(train_r2, test_r2, num_capas, unidades_por_capa, activacion)
     predicciones_train_r2_r1, predicciones_test_r2_r1 = red_neuronal_r1_r2(train_r2_r1, test_r2_r1, num_capas, unidades_por_capa, activacion)
     for i in range(0, len(train_r1)):
-        muestra[i] += [True, predicciones_train_r1[i],predicciones_train_r2[i],predicciones_train_r2_r1[i]]
+        muestra[i] += [True, predicciones_train_r1[i]+1,predicciones_train_r2[i]+1,predicciones_train_r2_r1[i]+1]
     for i in range(0, len(test_r1)):
         muestra[i+len(train_r1)] += [False, predicciones_test_r1[i]+1,predicciones_test_r2[i]+1,predicciones_test_r2_r1[i]+1]
     dataframe = pd.DataFrame(muestra,columns=['poblacion_canton', 'superficie_canton','densidad_poblacion','urbano','sexo','dependencia_demografica','ocupa_vivienda','promedio_ocupantes','vivienda_buen_estado', 'vivienda_hacinada','alfabetismo','escolaridad_promedio','educacion_regular','fuera_fuerza_trabajo','participacion_fuerza_trabajo','asegurado','extranjero','discapacidad','no_asegurado', 'porcentaje_jefatura_femenina','porcentaje_jefatura_compartida', 'edad','voto_primera_ronda','voto_segunda_ronda','es_entrenamiento', 'prediccion_r1', 'prediccion_r2','prediccion_r2_con_r1'])
     dataframe.to_csv('resultados_redes_neuronales.csv',index=False)
-    return muestra
+    
         
 
 def red_neuronal_r1_r2(muestra, test, num_capas, unidades_por_capa, activacion):
