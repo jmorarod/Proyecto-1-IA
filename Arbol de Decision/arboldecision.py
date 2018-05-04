@@ -3,14 +3,13 @@ from arbol import Nodo, Hoja, Atributo
 from g05 import datos_r1_normalizados, datos_r2_normalizados, datos_r2_con_r1_normalizados
 from pc1 import generar_muestra_pais, generar_muestra_provincia
 import numpy as np
+import pandas as pd
 
 
 # será útil para uno de los casos de los árboles de decisión, guardará los
 # índice de los atributos de mayor utilidad
 atributos_utilizados = []
 encabezados = []
-c_entrenamiento = []
-c_pruebas = []
 columnas_mayor_ocho = []
 
 
@@ -361,6 +360,11 @@ def armar_arbol(conjunto_entrenamiento, filas_padre):
                 hoja = Hoja(target)
                 return hoja
                 # crear una hoja aquí
+            #elif es_ganancia_cero(ganancias_permitidas):
+            #    target = obtener_pluralidad(conjunto_entrenamiento)
+            #    hoja = Hoja(target)
+            #    return hoja
+
             else:
                 hijos = []
                 indice_maximo = obtener_indice_maximo(ganancias_permitidas)
@@ -418,9 +422,6 @@ def generar_header_conjunto_entrenamiento(conjunto_entrenamiento):
 
 def recorrer_arbol(arbol):
     if(isinstance(arbol, Nodo)):
-        print(arbol.ganancia)
-        if es_nodo_con_hojas(arbol):
-            print("SHIIIII")
         for i in arbol.hijos:
             recorrer_arbol(i)
     elif(isinstance(arbol, Hoja)):
@@ -434,8 +435,8 @@ def imprimir_columna(datos, columna):
     return lista
 
 
-def obtener_valor_porcentaje_pruebas(n):
-    return int(round(n * 0.25))
+def obtener_valor_porcentaje_pruebas(n, porcentaje):
+    return int(round(n * (porcentaje/100)))
 
 
 def partir_datos_entrenamiento_prueba(
@@ -454,16 +455,12 @@ def partir_datos_entrenamiento_prueba(
     return datos_entrenamiento, datos_prueba
 
 
-def generar_arbol(n):
+def generar_arbol(n, porcentaje_pruebas, data):
 
-    cantidad_datos_prueba = obtener_valor_porcentaje_pruebas(n)
+    cantidad_datos_prueba = obtener_valor_porcentaje_pruebas(n, porcentaje_pruebas)
     cantidad_datos_entrenamiento = n - cantidad_datos_prueba
     print(cantidad_datos_entrenamiento)
     print(cantidad_datos_prueba)
-    muestra = generar_muestra_pais(n)
-    #data = datos_r1_normalizados(muestra)
-    #data = datos_r2_normalizados(muestra)
-    data = datos_r2_con_r1_normalizados(muestra)
     data = np.array(data).tolist()
         
 
@@ -483,7 +480,7 @@ def generar_arbol(n):
 
     generar_header_conjunto_entrenamiento(c_entrenamiento)
     arbol = armar_arbol(c_entrenamiento, c_entrenamiento)
-    return arbol, c_pruebas
+    return arbol, c_pruebas, c_entrenamiento
 
 
 def obtener_indice_conjunto(conjunto, valor):
@@ -544,12 +541,23 @@ def es_nodo_con_hojas(arbol):
             return False
     return True
 
+def obtener_nodos_con_solo_hojas(arbol):
+    lista = []
+    if isinstance(arbol, Nodo):
+        if es_nodo_con_hojas(arbol):
+            lista.append(arbol)
+            return lista
+        else:
+            for i in arbol.hijos:
+                lista += (obtener_nodos_con_solo_hojas(i))
+            return lista
+    elif isinstance(arbol, Hoja):
+        return lista
+    
 
 def podar_arbol(arbol, umbral):
     if isinstance(arbol, Nodo):
         if es_nodo_con_hojas(arbol):
-            print("HOJAAAAAAAAAAS")
-            print(arbol.ganancia)
             if arbol.ganancia < umbral:
                 target = obtener_pluralidad(arbol.filas)
                 hoja = Hoja(target)
@@ -560,11 +568,7 @@ def podar_arbol(arbol, umbral):
             tamano = len(arbol.hijos)
             hijos = []
             for i in range(tamano):
-                print("hijo original")
-                print(arbol.hijos[i])
                 hijo = podar_arbol(arbol.hijos[i], umbral)
-                print("hijo nuevo")
-                print(hijo)
                 hijos.append(hijo)
             arbol.hijos = hijos
             return arbol
@@ -581,29 +585,195 @@ def podar_arbol(arbol, umbral):
     elif isinstance(arbol, Hoja):
         return arbol
 
-    #return arbol
-    #elif(isinstance(arbol, Hoja)):
-    #    print(arbol.target)
-
-def funcion_principal():
-    arbol, c_pruebas = generar_arbol(10000)
-    predicciones, valores_reales = predecir(c_pruebas, arbol)
-    verdaderos_positivos, falsos_positivos = obtener_verdaderos_falsos_positivos(
-        predicciones, valores_reales)
-    print(verdaderos_positivos)
-    print(falsos_positivos)
-    precision = obtener_precision(verdaderos_positivos, falsos_positivos)
-    print(precision)
-    arbol_podado = podar_arbol(arbol, 0.08)
-    #arbol_podado2 = podar_arbol(arbol_podado, 0.08)
     
-    #arbol_podado3 = podar_arbol(arbol_podado2, 0.08)
+def hay_ganancia_menor_umbral(nodos, umbral):
+    for i in nodos:
+        if i.ganancia < umbral:
+            return True
+    return False
+
+def podar_arbol_aux_aux(arbol, umbral):
+    ganancias_nodos_solo_hojas = obtener_nodos_con_solo_hojas(arbol)
+    while hay_ganancia_menor_umbral(ganancias_nodos_solo_hojas, umbral):
+        recorrer_arbol(arbol)
+        print("\n\n\n")
     
-    #arbol_podado4 = podar_arbol(arbol_podado3, 0.08)
-    recorrer_arbol(arbol)
-    print("\n\n\n\n\n")
-    recorrer_arbol(arbol_podado)
-    #recorrer_arbol(arbol_podado)
+        arbol = podar_arbol(arbol, umbral)
+        ganancias_nodos_solo_hojas = obtener_nodos_con_solo_hojas(arbol)
+    return arbol
+
+def imprimir_hojas(arbol):
+    if isinstance(arbol, Hoja):
+        print(arbol.target)
+    else:
+        for i in arbol.hijos:
+            imprimir_hojas(i)
+
+def funcion_principal(numero_muestra, porcentaje_pruebas):
+    
+    global encabezados
+    global columnas_mayor_ocho
+    global atributos_utilizados
 
 
-funcion_principal()
+    muestra = generar_muestra_pais(numero_muestra)
+    data_r1 = datos_r1_normalizados(muestra)
+    data_r2 = datos_r2_normalizados(muestra)
+    data_r2_r1 = datos_r2_con_r1_normalizados(muestra)
+
+    
+    
+    arbol_r1, c_pruebas_r1, c_entrenamiento_r1 = generar_arbol(numero_muestra, porcentaje_pruebas, data_r1)
+    encabezados = []
+    columnas_mayor_ocho = []
+    atributos_utilizados = []
+    arbol_r2, c_pruebas_r2, c_entrenamiento_r2 = generar_arbol(numero_muestra, porcentaje_pruebas, data_r2)
+    encabezados = []
+    columnas_mayor_ocho = []
+    atributos_utilizados = []
+    arbol_r2_r1, c_pruebas_r2_r1, c_entrenamiento_r2_r1 = generar_arbol(numero_muestra, porcentaje_pruebas, data_r2_r1)
+    encabezados = []
+    columnas_mayor_ocho = []
+    atributos_utilizados = []
+    
+    print(obtener_nodos_con_solo_hojas(arbol_r2_r1))
+    
+    
+    #predicciones para los datos de la primera ronda, con conjunto de pruebas
+    predicciones_r1_prueba, valores_reales_r1_prueba = predecir(c_pruebas_r1, arbol_r1)
+    verdaderos_positivos_r1_prueba, falsos_positivos_r1_prueba = obtener_verdaderos_falsos_positivos(
+        predicciones_r1_prueba, valores_reales_r1_prueba)
+    print("Verdaderos y falsos positivos para la primera ronda, pruebas")
+    print("------------------------------------------------------")
+    print("Verdaderos positivos:")
+    print(verdaderos_positivos_r1_prueba)
+    print("Falsos positivos:")
+    print(falsos_positivos_r1_prueba)
+    precision_r1_prueba = obtener_precision(verdaderos_positivos_r1_prueba, falsos_positivos_r1_prueba)
+    print("Precisión:")
+    print(precision_r1_prueba)
+    print("Error de pruebas:")
+    print(falsos_positivos_r1_prueba)
+    print("------------------------------------------------------")
+
+
+    #predicciones para los datos de la primera ronda, con conjunto de entrenamiento
+    predicciones_r1_entrenamiento, valores_reales_r1_entrenamiento = predecir(c_entrenamiento_r1, arbol_r1)
+    verdaderos_positivos_r1_entrenamiento, falsos_positivos_r1_entrenamiento = obtener_verdaderos_falsos_positivos(
+        predicciones_r1_entrenamiento, valores_reales_r1_entrenamiento)
+    print("Verdaderos y falsos positivos para la primera ronda, entrenamiento")
+    print("------------------------------------------------------")
+    print("Verdaderos positivos:")
+    print(verdaderos_positivos_r1_entrenamiento)
+    print("Falsos positivos:")
+    print(falsos_positivos_r1_entrenamiento)
+    precision_r1_entrenamiento = obtener_precision(verdaderos_positivos_r1_entrenamiento, falsos_positivos_r1_entrenamiento)
+    print("Precisión:")
+    print(precision_r1_entrenamiento)
+    print("Error de entrenamiento:")
+    print(falsos_positivos_r1_entrenamiento)
+    print("------------------------------------------------------")
+
+    #predicciones para los datos de la segunda ronda, con conjunto de pruebas
+    predicciones_r2_prueba, valores_reales_r2_prueba = predecir(c_pruebas_r2, arbol_r2)
+    verdaderos_positivos_r2_prueba, falsos_positivos_r2_prueba = obtener_verdaderos_falsos_positivos(
+        predicciones_r2_prueba, valores_reales_r2_prueba)
+    print("Verdaderos y falsos positivos para la segunda ronda, pruebas")
+    print("------------------------------------------------------")
+    print("Verdaderos positivos:")
+    print(verdaderos_positivos_r2_prueba)
+    print("Falsos positivos:")
+    print(falsos_positivos_r2_prueba)
+    precision_r2_prueba = obtener_precision(verdaderos_positivos_r2_prueba, falsos_positivos_r2_prueba)
+    print("Precisión:")
+    print(precision_r2_prueba)
+    print("Error de pruebas:")
+    print(falsos_positivos_r2_prueba)
+    print("------------------------------------------------------")
+
+    #predicciones para los datos de la segunda ronda, con conjunto de entrenamiento
+    predicciones_r2_entrenamiento, valores_reales_r2_entrenamiento = predecir(c_entrenamiento_r2, arbol_r2)
+    verdaderos_positivos_r2_entrenamiento, falsos_positivos_r2_entrenamiento = obtener_verdaderos_falsos_positivos(
+        predicciones_r2_entrenamiento, valores_reales_r2_entrenamiento)
+    print("Verdaderos y falsos positivos para la segunda ronda, entrenamiento")
+    print("------------------------------------------------------")
+    print("Verdaderos positivos:")
+    print(verdaderos_positivos_r2_entrenamiento)
+    print("Falsos positivos:")
+    print(falsos_positivos_r2_entrenamiento)
+    precision_r2_entrenamiento = obtener_precision(verdaderos_positivos_r2_entrenamiento, falsos_positivos_r2_entrenamiento)
+    print("Precisión:")
+    print(precision_r2_entrenamiento)
+    print("Error de entrenamiento:")
+    print(falsos_positivos_r2_entrenamiento)
+    print("------------------------------------------------------")
+    
+    #predicciones para los datos de la segunda ronda + primera ronda, con conjunto de pruebas
+    predicciones_r2_r1_prueba, valores_reales_r2_r1_prueba = predecir(c_pruebas_r2_r1, arbol_r2_r1)
+    verdaderos_positivos_r2_r1_prueba, falsos_positivos_r2_r1_prueba = obtener_verdaderos_falsos_positivos(
+        predicciones_r2_r1_prueba, valores_reales_r2_r1_prueba)
+    print("Verdaderos y falsos positivos para la segunda ronda + primera ronda, pruebas")
+    print("------------------------------------------------------")
+    print("Verdaderos positivos:")
+    print(verdaderos_positivos_r2_r1_prueba)
+    print("Falsos positivos:")
+    print(falsos_positivos_r2_r1_prueba)
+    precision_r2_r1_prueba = obtener_precision(verdaderos_positivos_r2_r1_prueba, falsos_positivos_r2_r1_prueba)
+    print("Precisión:")
+    print(precision_r2_r1_prueba)
+    print("Error de pruebas:")
+    print(falsos_positivos_r2_r1_prueba)
+    print("------------------------------------------------------")
+
+    #predicciones para los datos de la segunda ronda + primera ronda, con conjunto de entrenamiento
+    predicciones_r2_r1_entrenamiento, valores_reales_r2_r1_entrenamiento = predecir(c_entrenamiento_r2_r1, arbol_r2_r1)
+    verdaderos_positivos_r2_r1_entrenamiento, falsos_positivos_r2_r1_entrenamiento = obtener_verdaderos_falsos_positivos(
+        predicciones_r2_r1_entrenamiento, valores_reales_r2_r1_entrenamiento)
+    print("Verdaderos y falsos positivos para la segunda ronda + primera ronda, entrenamiento")
+    print("------------------------------------------------------")
+    print("Verdaderos positivos:")
+    print(verdaderos_positivos_r2_r1_entrenamiento)
+    print("Falsos positivos:")
+    print(falsos_positivos_r2_r1_entrenamiento)
+    precision_r2_r1_entrenamiento = obtener_precision(verdaderos_positivos_r2_r1_entrenamiento, falsos_positivos_r2_r1_entrenamiento)
+    print("Precisión:")
+    print(precision_r2_r1_entrenamiento)
+    print("Error de entrenamiento:")
+    print(falsos_positivos_r2_r1_entrenamiento)
+    print("------------------------------------------------------")
+    
+    print(set(predicciones_r1_entrenamiento))
+
+    #print(precision_r2_entrenamiento)
+    #print(predicciones_r2_r1_entrenamiento)
+
+    
+    tamano_recorrer_entrenamiento = len(predicciones_r1_entrenamiento)
+    for i in range(tamano_recorrer_entrenamiento):
+        muestra[i] += [True, predicciones_r1_entrenamiento[i], predicciones_r2_entrenamiento[i], predicciones_r2_r1_entrenamiento[i]]
+    tamano_recorrer_prueba = len(predicciones_r1_prueba)
+    for i in range(tamano_recorrer_prueba):
+        muestra[i+tamano_recorrer_entrenamiento] += [False, predicciones_r1_prueba[i], predicciones_r2_prueba[i], predicciones_r2_r1_prueba[i]]
+    dataframe = pd.DataFrame(muestra,columns=['poblacion_canton', 'superficie_canton','densidad_poblacion','urbano','sexo','dependencia_demografica','ocupa_vivienda','promedio_ocupantes','vivienda_buen_estado', 'vivienda_hacinada','alfabetismo','escolaridad_promedio','educacion_regular','fuera_fuerza_trabajo','participacion_fuerza_trabajo','asegurado','extranjero','discapacidad','no_asegurado', 'porcentaje_jefatura_femenina','porcentaje_jefatura_compartida', 'edad','voto_primera_ronda','voto_segunda_ronda','es_entrenamiento', 'prediccion_r1', 'prediccion_r2','prediccion_r2_con_r1'])
+    dataframe.to_csv('resultados_arbol_decision.csv',index=False)
+    
+    
+
+    #recorrer_arbol(arbol)
+    #print("\n\n\n\n\n")
+
+
+    #arbol = podar_arbol_aux_aux(arbol, 0.03)
+    #print("ARBOL FINAL")
+    #recorrer_arbol(arbol)
+
+    #predicciones, valores_reales = predecir(c_pruebas, arbol)
+    #verdaderos_positivos, falsos_positivos = obtener_verdaderos_falsos_positivos(
+    #    predicciones, valores_reales)
+    #print(verdaderos_positivos)
+    #print(falsos_positivos)
+    #precision = obtener_precision(verdaderos_positivos, falsos_positivos)
+    #print(precision)
+    
+
+funcion_principal(10000, 25)
