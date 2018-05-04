@@ -2,6 +2,8 @@ from tec.ic.ia.pc1.g05 import generar_muestra_pais, generar_muestra_provincia
 #from pc1 import generar_muestra_pais, generar_muestra_provincia
 import numpy as np
 from sklearn.preprocessing import StandardScaler
+from sklearn import svm
+from sklearn.metrics import mean_squared_error, accuracy_score
 from keras.models import Sequential
 from keras.layers import Dense
 import keras
@@ -20,6 +22,75 @@ def split_muestra(muestra, porcentaje):
         else:
             test_set += [muestra[i]]
     return training_set, test_set
+def support_vector_machines(n_muestra, porcentaje_test, p_kernel):
+    muestra = generar_muestra_pais(n_muestra)
+    muestra_r1 = datos_r1_normalizados(muestra)
+    muestra_r2 = datos_r2_normalizados(muestra)
+    muestra_r2_r1 = datos_r2_con_r1_normalizados(muestra)
+    train_r1, test_r1 = split_muestra(muestra_r1, porcentaje_test)
+    train_r2, test_r2 = split_muestra(muestra_r2, porcentaje_test)
+    train_r2_r1, test_r2_r1 = split_muestra(muestra_r2_r1, porcentaje_test)
+    model_r1 = svm.SVC(kernel = p_kernel)
+    model_r2 = svm.SVC(kernel = p_kernel)
+    model_r2_r1 = svm.SVC(kernel = p_kernel)
+    predicciones_train_r1, predicciones_test_r1 = predicciones_svm(train_r1, test_r1, model_r1, "1")
+    predicciones_train_r2, predicciones_test_r2 = predicciones_svm(train_r2, test_r2, model_r2, "2")
+    predicciones_train_r2_r1, predicciones_test_r2_r1 = predicciones_svm(train_r2_r1, test_r2_r1, model_r2_r1, "2_1")
+    for i in range(0, len(train_r1)):
+        muestra[i] += [True, predicciones_train_r1[i]+1,predicciones_train_r2[i]+1,predicciones_train_r2_r1[i]+1]
+    for i in range(0, len(test_r1)):
+        muestra[i+len(train_r1)] += [False, predicciones_test_r1[i]+1,predicciones_test_r2[i]+1,predicciones_test_r2_r1[i]+1]
+    dataframe = pd.DataFrame(muestra,columns=['poblacion_canton', 'superficie_canton','densidad_poblacion','urbano','sexo','dependencia_demografica','ocupa_vivienda','promedio_ocupantes','vivienda_buen_estado', 'vivienda_hacinada','alfabetismo','escolaridad_promedio','educacion_regular','fuera_fuerza_trabajo','participacion_fuerza_trabajo','asegurado','extranjero','discapacidad','no_asegurado', 'porcentaje_jefatura_femenina','porcentaje_jefatura_compartida', 'edad','voto_primera_ronda','voto_segunda_ronda','es_entrenamiento', 'prediccion_r1', 'prediccion_r2','prediccion_r2_con_r1'])
+    dataframe.to_csv('resultados_svm.csv',index=False)
+
+def predicciones_svm(train_set, test_set, model, ronda):
+    x_train = []
+    x_test = []
+    y_test = get_column(test_set,-1)
+    y_train = get_column(train_set,-1)
+##    for i in range(0,len(y_train)):
+##        y_train[i] -= 1
+##    for i in range(0,len(y_test)):
+##        y_test[i] -= 1
+##    y_train = keras.utils.to_categorical(y_train,num_classes = 15)
+##    y_test = keras.utils.to_categorical(y_test,num_classes = 15)
+    for i in range (0, len(train_set)):
+        x_train += [train_set[i][:-1]]
+    for i in range (0, len(test_set)):
+        x_test += [test_set[i][:-1]]
+    model.fit(x_train, y_train)
+
+    prediccion_train= model.predict(x_train)
+    prediccion_test= model.predict(x_test)
+    squared_error = mean_squared_error(y_train, prediccion_train)
+    accuracy = accuracy_score(y_train, prediccion_train)
+    squared_error_test = mean_squared_error(y_test, prediccion_test)
+    accuracy_test = accuracy_score(y_test, prediccion_test)
+    if(ronda == "1"):
+        print("[============================]")
+        print("Ronda 1 - Error en entrenamiento: ", squared_error)
+        print("Ronda 1- Precision en entrenamiento: ", accuracy)
+        print("[============================]")
+        print("Ronda 1 - Error en pruebas: ", squared_error_test)
+        print("Ronda 1 - Precision en pruebas: ", accuracy_test)
+    elif(ronda == "2"):
+        print("[============================]")
+        print("Ronda 2 - Error en entrenamiento: ", squared_error)
+        print("Ronda 2- Precision en entrenamiento: ", accuracy)
+        print("[============================]")
+        print("Ronda 2 - Error en pruebas: ", squared_error_test)
+        print("Ronda 2 - Precision en pruebas: ", accuracy_test)
+    else:
+        print("[============================]")
+        print("Ronda 2 con Ronda 1 - Error en entrenamiento: ", squared_error)
+        print("Ronda 2 con Ronda 1- Precision en entrenamiento: ", accuracy)
+        print("[============================]")
+        print("Ronda 2 con Ronda 1 - Error en pruebas: ", squared_error_test)
+        print("Ronda 2 con Ronda 1 - Precision en pruebas: ", accuracy_test)
+    return prediccion_train, prediccion_test
+        
+    
+    
 def regresiones_logisticas(n_muestra, porcentaje_test, regularizacion):
     muestra = generar_muestra_pais(n_muestra)
     muestra_r1 = datos_r1_normalizados(muestra)
@@ -96,10 +167,10 @@ def regresion_logistica_r1(train_set, test_set, learning_rate, regularizacion):
         for i in cost_in_each_epoch_2:
             cost_test += i
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-         print("[============================]")
+        print("[============================]")
         print("Ronda 1 - Error en entrenamiento: ", cost_train)
         print("Ronda 1- Precision en entrenamiento: ", accuracy.eval({x: x_train, y: y_train}))
-         print("[============================]")
+        print("[============================]")
         print("Ronda 1 - Error en pruebas: ", cost_test)
         print("Ronda 1 - Precision en pruebas: ", accuracy.eval({x: x_test, y: y_test}))
         predicciones_train = y_.eval({x: x_train})
