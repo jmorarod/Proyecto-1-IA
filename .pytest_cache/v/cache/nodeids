@@ -1,16 +1,11 @@
 [
-  "K-d Tree/p1/test_kd_tree.py::test_distance",
-  "K-d Tree/p1/test_kd_tree.py::test_on_non_list_arguments_distance",
-  "K-d Tree/p1/test_kd_tree.py::test_closest_point",
-  "K-d Tree/p1/test_kd_tree.py::test_on_non_type_arguments_closest_point",
-  "K-d Tree/p1/test_kd_tree.py::test_create_csv",
-  "K-d Tree/p1/test_kd_tree.py::test_on_non_type_parameter_create_csv",
-  "K-d Tree/p1/test_kd_tree.py::test_on_non_type_parameter_list_create_csv",
-  "K-d Tree/p1/test_kd_tree.py::test_on_non_proper_len_parameter_create_csv",
-  "K-d Tree/p1/test_kd_tree.py::test_insert_node_right",
-  "K-d Tree/p1/test_kd_tree.py::test_insert_node_left",
-  "K-d Tree/p1/test_kd_tree.py::test_on_non_type_parameter_insert_node",
-  "K-d Tree/p1/test_kd_tree.py::test_on_non_type_parameter_node",
-  "K-d Tree/p1/test_kd_tree.py::test_insert_leaf",
-  "K-d Tree/p1/test_kd_tree.py::test_on_non_type_parameter_insert_leaf"
+  "Arbol de Decision/pruebas_unitarias.py::test_arbol_decision_1",
+  "Arbol de Decision/pruebas_unitarias.py::test_arbol_decision_2",
+  "Arbol de Decision/pruebas_unitarias.py::test_arbol_decision_3",
+  "Arbol de Decision/pruebas_unitarias.py::test_arbol_decision_4",
+  "Arbol de Decision/pruebas_unitarias.py::test_arbol_decision_5",
+  "Arbol de Decision/pruebas_unitarias.py::test_arbol_decision_6",
+  "Arbol de Decision/pruebas_unitarias.py::test_arbol_decision_7",
+  "Arbol de Decision/pruebas_unitarias.py::test_arbol_decision_8",
+  "Arbol de Decision/pruebas_unitarias.py::test_arbol_decision_9"
 ]

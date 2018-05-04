@@ -711,6 +711,19 @@ def imprimir_hojas(arbol):
         for i in arbol.hijos:
             imprimir_hojas(i)
 
+
+# función encargada de limpiar las variables globales que se utilizan para armar el árbol de decisión
+def limpiar_variables_globales():
+    global encabezados
+    global columnas_mayor_ocho
+    global atributos_utilizados
+
+    encabezados = []
+    columnas_mayor_ocho = []
+    atributos_utilizados = []
+    
+
+
 # función principal, en esta función se recibe el número de la muestra y el porcentaje para el conjunto de pruebas
 # además, se generan las muestras y árboles para las rondas 1,2 y ronda 2 + ronda 1
 # se realizan las predicciones, cálculo de precisión y errores de prueba y entrenamiento
@@ -719,9 +732,7 @@ def imprimir_hojas(arbol):
 
 def funcion_principal(numero_muestra, porcentaje_pruebas):
 
-    global encabezados
-    global columnas_mayor_ocho
-    global atributos_utilizados
+    
 
     # generación de la muestra y adaptación para los datos de primera ronda,
     # segunda ronda y primera + segunda ronda
@@ -733,20 +744,13 @@ def funcion_principal(numero_muestra, porcentaje_pruebas):
     # se hace el cálculo de los árboles
     arbol_r1, c_pruebas_r1, c_entrenamiento_r1 = generar_arbol(
         numero_muestra, porcentaje_pruebas, data_r1)
-    encabezados = []
-    columnas_mayor_ocho = []
-    atributos_utilizados = []
+    limpiar_variables_globales()
     arbol_r2, c_pruebas_r2, c_entrenamiento_r2 = generar_arbol(
         numero_muestra, porcentaje_pruebas, data_r2)
-    encabezados = []
-    columnas_mayor_ocho = []
-    atributos_utilizados = []
+    limpiar_variables_globales()
     arbol_r2_r1, c_pruebas_r2_r1, c_entrenamiento_r2_r1 = generar_arbol(
         numero_muestra, porcentaje_pruebas, data_r2_r1)
-    encabezados = []
-    columnas_mayor_ocho = []
-    atributos_utilizados = []
-
+    limpiar_variables_globales()
     # predicciones para los datos de la primera ronda, con conjunto de pruebas
     predicciones_r1_prueba, valores_reales_r1_prueba = predecir(
         c_pruebas_r1, arbol_r1)
@@ -769,8 +773,8 @@ def funcion_principal(numero_muestra, porcentaje_pruebas):
 
     # predicciones para los datos de la primera ronda, con conjunto de
     # entrenamiento
-    predicciones_r1_entrenamiento, valores_reales_r1_entrenamiento = predecir(
-        c_entrenamiento_r1, arbol_r1)
+    , valores_reales_r1_entrenamiento = predecir(
+        c_entrenamienpredicciones_r1_entrenamientoto_r1, arbol_r1)
     verdaderos_positivos_r1_entrenamiento, falsos_positivos_r1_entrenamiento = obtener_verdaderos_falsos_positivos(
         predicciones_r1_entrenamiento, valores_reales_r1_entrenamiento)
     print("Verdaderos y falsos positivos para la primera ronda, entrenamiento")
@@ -921,4 +925,41 @@ def funcion_principal(numero_muestra, porcentaje_pruebas):
     dataframe.to_csv('resultados_arbol_decision.csv', index=False)
 
 
-funcion_principal(10000, 25)
+c_entrenamiento = [
+    [-0.3, -0.3, 0.3, '1', 0.3, '1', '1', -0.3, '1', '-1', '1', 0.3, 0.3, '-1', '1', '1', '1', '1', 0.3, 0.3, 0.3, '1.1', '2.0'],
+    [-0.2, -0.3, 0.3, '1', 0.3, '1', '1', -0.3, '-1', '1', '1', 0.3, 0.3, '-1', '1', '-1', '1', '1', 0.3, 0.3, -0.3, '1.0', '2.0'],
+    [-0.1, -0.3, 0.3, '1', 0.3, '1', '1', -0.3, '1', '-1', '-1', 0.3, 0.3, '-1', '1', '1', '-1', '1', 0.3, 0.3, 0.3, '0.9', '1.0'],
+    [-0.9, 0.3, -0.3, '1', -0.3, '1', '1', 0.3, '-1', '1', '1', -0.3, -0.3, '-1', '1', '-1', '1', '1', -0.3, -0.3, -0.3, '1.1', '3.0'],
+    [0.3, 0.3, -0.3, '1', -0.3, '1', '1', 0.3, '1', '-1', '1', -0.3, -0.3, '-1', '1', '1', '1', '1', -0.3, -0.3, 0.3, '1.0', '1.0'],
+    [0.3, 0.3, -0.3, '1', -0.3, '1', '-1', 0.3, '-1', '-1', '1', -0.3, -0.3, '1', '1', '1', '1', '1', -0.3, -0.3, -0.3, '0.9', '2.0'],
+    [0.3, -0.3, 0.3, '1', 0.3, '1', '1', -0.3, '1', '1', '-1', 0.3, 0.3, '-1', '1', '-1', '-1', '1', 0.3, -0.3, -0.3, '1.1', '1.0'],
+    [-0.3, -0.3, 0.3, '-1', 0.3, '1', '1', -0.3, '-1', '1', '1', 0.3, 0.3, '-1', '1', '1', '-1', '1', 0.3, 0.3, -0.3, '1.0', '2.0'],
+    [-0.3, -0.3, 0.3, '-1', 0.3, '-1', '-1', -0.3, '1', '1', '1', 0.3, -0.3, '-1', '1', '1', '1', '1', 0.3, 0.3, 0.3, '0.9', '1.0'],
+    [-0.3, 0.3, -0.3, '-1', -0.3, '-1', '1', 0.3, '-1', '-1', '1', -0.3, -0.3, '-1', '1', '-1', '-1', '1', -0.3, 0.3, -0.3, '1.1', '2.0'],
+    [0.3, 0.3, -0.3, '-1', -0.3, '-1', '1', 0.3, '1', '-1', '-1', -0.3, 0.3, '-1', '1', '1', '1', '1', -0.3, -0.3, -0.3, '1.0', '1.0'],
+    [0.3, 0.3, -0.3, '-1', -0.3, '1', '1', 0.3, '-1', '1', '-1', -0.3, 0.3, '-1', '1', '1', '1', '1', -0.3, -0.3, -0.3, '0.9', '2.0'],
+    [0.3, -0.3, 0.3, '-1', 0.3, '1', '1', -0.3, '1', '-1', '-1', 0.3, 0.3, '-1', '1', '-1', '-1', '1', 0.3, -0.3, 0.3, '1.1', '1.0'],
+    [-0.3, -0.3, 0.3, '-1', 0.3, '1', '1', -0.3, '1', '1', '1', 0.3, 0.3, '-1', '1', '-1', '1', '1', 0.3, -0.3, -0.3, '1.0', '2.0'],
+    [-0.3, -0.3, 0.3, '-1', 0.3, '1', '-1', -0.3, '1', '-1', '1', 0.3, -0.3, '-1', '1', '-1', '1', '1', 0.3, 0.3, -0.3, '0.9', '1.0'],
+    [-0.3, 0.3, -0.3, '-1', -0.3, '1', '-1', 0.3, '-1', '1', '1', -0.3, -0.3, '-1', '-1', '1', '-1', '1', -0.3, 0.3, -0.3, '1.1', '2.0'],
+    [0.3, 0.3, -0.3, '-1', -0.3, '-1', '-1', 0.3, '-1', '-1', '1', -0.3, -0.3, '-1', '1', '1', '1', '1', -0.3, -0.3, -0.3, '1.0', '1.0'],
+    [0.3, 0.3, -0.3, '-1', -0.3, '-1', '-1', 0.3, '1', '-1', '-1', -0.3, 0.3, '-1', '-1', '1', '-1', '1', -0.3, 0.3, -0.3, '0.9', '2.0'],
+    [0.3, -0.3, 0.3, '-1', 0.3, '-1', '-1', -0.3, '1', '1', '1', 0.3, 0.3, '-1', '1', '1', '1', '1', 0.3, -0.3, 0.3, '1.1', '1.0'],
+    [-0.3, -0.3, 0.3, '-1', 0.3, '-1', '1', -0.3, '1', '-1', '1', 0.3, 0.3, '-1', '-1', '1', '1', '-1', 0.3, -0.3, -0.3, '1.0', '2.0'],
+    [-0.3, -0.3, 0.3, '-1', 0.3, '-1', '1', -0.3, '-1', '1', '1', 0.3, 0.3, '-1', '1', '-1', '-1', '1', 0.3, -0.3, -0.3, '0.9', '1.0'],
+    [-0.3, 0.3, -0.3, '-1', -0.3, '-1', '1', 0.3, '1', '1', '-1', -0.3, -0.3, '-1', '-1', '-1', '1', '1', -0.3, -0.3, 0.3, '1.1', '2.0'],
+    [0.3, 0.3, -0.3, '-1', -0.3, '1', '1', 0.3, '1', '-1', '-1', -0.3, -0.3, '-1', '1', '1', '1', '1', -0.3, 0.3, -0.3, '1.0', '1.0'],
+    [0.3, 0.3, -0.3, '-1', -0.3, '1', '1', 0.3, '-1', '1', '-1', 0.3, 0.3, '-1', '-1', '1', '-1', '1', -0.3, 0.3, -0.3, '0.9', '2.0'],
+    [0.3, -0.3, 0.3, '-1', 0.3, '1', '1', -0.3, '1', '-1', '1', 0.3, 0.3, '-1', '1', '1', '1', '1', 0.3, -0.3, -0.3, '1.0', '1.0'],
+    [-0.3, -0.3, 0.3, '-1', 0.3, '1', '1', -0.3, '1', '1', '1', 0.3, -0.3, '-1', '-1', '-1', '-1', '1', 0.3, -0.3, 0.3, '1.1', '2.0'],
+    [-0.3, -0.3, 0.3, '-1', 0.3, '1', '1', -0.3, '1', '-1', '1', -0.3, 0.3, '-1', '1', '-1', '1', '1', 0.3, -0.3, -0.3, '1.0', '1.0'],
+    [-0.3, 0.3, -0.3, '-1', -0.3, '1', '-1', 0.3, '-1', '1', '1', -0.3, -0.3, '-1', '-1', '1', '-1', '1', -0.3, -0.3, 0.3, '0.1', '2.0'],
+    
+
+]
+
+#print(obtener_pluralidad(c_entrenamiento))
+#print(contar_valores_conjunto_entrenamiento(c_entrenamiento))
+#print(obtener_conjunto_columna(c_entrenamiento, 2))
+
+#funcion_principal(10000, 25)
