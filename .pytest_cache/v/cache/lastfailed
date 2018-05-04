@@ -1,0 +1,4 @@
+{
+  "K-d Tree/p1/test_kd_tree.py::test_raises_exception_on_non_same_len_size_arguments_distance": true,
+  "K-d Tree/p1/test_kd_tree.py::test_raises_exception_on_non_string_arguments": true
+}
