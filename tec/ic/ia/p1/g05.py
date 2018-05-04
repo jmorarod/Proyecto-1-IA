@@ -96,10 +96,12 @@ def regresion_logistica_r1(train_set, test_set, learning_rate, regularizacion):
         for i in cost_in_each_epoch_2:
             cost_test += i
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-        print("Error en entrenamiento: ", cost_train)
-        print("Precision en entrenamiento: ", accuracy.eval({x: x_train, y: y_train}))
-        print("Error en pruebas: ", cost_test)
-        print("Precision en pruebas: ", accuracy.eval({x: x_test, y: y_test}))
+         print("[============================]")
+        print("Ronda 1 - Error en entrenamiento: ", cost_train)
+        print("Ronda 1- Precision en entrenamiento: ", accuracy.eval({x: x_train, y: y_train}))
+         print("[============================]")
+        print("Ronda 1 - Error en pruebas: ", cost_test)
+        print("Ronda 1 - Precision en pruebas: ", accuracy.eval({x: x_test, y: y_test}))
         predicciones_train = y_.eval({x: x_train})
         predicciones_test = y_.eval({x: x_test})
         sess.close()
@@ -168,10 +170,20 @@ def regresion_logistica(train_set, test_set, learning_rate, regularizacion, r2_c
         for i in cost_in_each_epoch_2:
             cost_test += i
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-        print("Error en entrenamiento: ", cost_train)
-        print("Precision en entrenamiento: ", accuracy.eval({x: x_train, y: y_train}))
-        print("Error en pruebas: ", cost_test)
-        print("Precision en pruebas: ", accuracy.eval({x: x_test, y: y_test}))
+        print("[============================]")
+        if(r2_con_r1):
+            print("Ronda 2 con Ronda 1 - Error en entrenamiento: ", cost_train)
+            print("Ronda 2 con Ronda 1 -Precision en entrenamiento: ", accuracy.eval({x: x_train, y: y_train}))
+            print("[============================]")
+            print("Ronda 2 con Ronda 1 - Error en pruebas: ", cost_test)
+            print("Ronda 2 con Ronda 1 - Precision en pruebas: ", accuracy.eval({x: x_test, y: y_test}))
+        else:
+            print("Ronda 2 - Error en entrenamiento: ", cost_train)
+            print("Ronda 2 -Precision en entrenamiento: ", accuracy.eval({x: x_train, y: y_train}))
+            print("[============================]")
+            print("Ronda 2 - Error en pruebas: ", cost_test)
+            print("Ronda 2 - Precision en pruebas: ", accuracy.eval({x: x_test, y: y_test}))
+        
         predicciones_train = y_.eval({x: x_train})
         predicciones_test = y_.eval({x: x_test})
         sess.close()
