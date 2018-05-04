@@ -252,11 +252,11 @@ def generar_votante(provincia):
     if(votante[15] == 2):
         votante[18] = sample(_indices_cantonales[28][num_canton])
     elif(votante[15] == 0):
-        votante[18] == 1
+        votante[18] = 1
     else:
-        votante[19] == 0
+        votante[18] = 0
     # porcentaje de hogares con jefatura femenina
-    votante[20] = _indices_cantonales[29][num_canton]
+    votante[19] = _indices_cantonales[29][num_canton]
     # porcentaje de hogares con jefatura compartida
     votante[20] = _indices_cantonales[30][num_canton]
     return votante

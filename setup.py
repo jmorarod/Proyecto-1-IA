@@ -22,7 +22,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 setup(
     name='tec.ic.ia.pc1.g05',  # Required
 
-    version='1.0.2',  # Required
+    version='2.0.0',  # Required
 
     py_modules=['tec.ic.ia.pc1.g05'],
 
