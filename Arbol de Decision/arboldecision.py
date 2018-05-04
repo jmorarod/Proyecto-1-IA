@@ -1,7 +1,7 @@
 import math
 from arbol import Nodo, Hoja, Atributo
 from g05 import datos_r1_normalizados, datos_r2_normalizados, datos_r2_con_r1_normalizados
-from pc1 import generar_muestra_pais, generar_muestra_provincia
+from pc1 import generar_muestra_pais, generar_muestra_provincia, cambiar_semilla
 import numpy as np
 import pandas as pd
 
@@ -773,8 +773,8 @@ def funcion_principal(numero_muestra, porcentaje_pruebas):
 
     # predicciones para los datos de la primera ronda, con conjunto de
     # entrenamiento
-    , valores_reales_r1_entrenamiento = predecir(
-        c_entrenamienpredicciones_r1_entrenamientoto_r1, arbol_r1)
+    predicciones_r1_entrenamiento,valores_reales_r1_entrenamiento = predecir(
+        c_entrenamiento_r1, arbol_r1)
     verdaderos_positivos_r1_entrenamiento, falsos_positivos_r1_entrenamiento = obtener_verdaderos_falsos_positivos(
         predicciones_r1_entrenamiento, valores_reales_r1_entrenamiento)
     print("Verdaderos y falsos positivos para la primera ronda, entrenamiento")
@@ -958,6 +958,32 @@ c_entrenamiento = [
 
 ]
 
+cambiar_semilla(9000)
+a = generar_muestra_pais(30)
+a_n = datos_r1_normalizados(a)
+a_n_l = np.array(a_n).tolist()
+
+
+arbol_r1, c_pruebas_r1, c_entrenamiento_r1 = generar_arbol(
+        30, 10, a_n_l)
+    
+predicciones_r1_prueba, valores_reales_r1_prueba = predecir(
+    c_pruebas_r1, arbol_r1)
+verdaderos_positivos_r1_prueba, falsos_positivos_r1_prueba = obtener_verdaderos_falsos_positivos(
+    predicciones_r1_prueba, valores_reales_r1_prueba)
+    
+predicciones_r1_entrenamiento,valores_reales_r1_entrenamiento = predecir(
+    c_entrenamiento_r1, arbol_r1)
+verdaderos_positivos_r1_entrenamiento, falsos_positivos_r1_entrenamiento = obtener_verdaderos_falsos_positivos(
+    predicciones_r1_entrenamiento, valores_reales_r1_entrenamiento)
+print("RESULTADO")
+print(falsos_positivos_r1_entrenamiento)
+print(falsos_positivos_r1_prueba)
+
+#print(obtener_entropia_conjunto_entrenamiento(a_n_l))
+#print(recorrer_columnas_datos_entrenamiento(a_n_l))
+#print(obtener_pluralidad(a_n_l))
+#print(contar_valores_conjunto_entrenamiento(a_n_l))
 #print(obtener_pluralidad(c_entrenamiento))
 #print(contar_valores_conjunto_entrenamiento(c_entrenamiento))
 #print(obtener_conjunto_columna(c_entrenamiento, 2))
