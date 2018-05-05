@@ -16,8 +16,8 @@ Estructura de los nodos que conforman el arbol
 class Node:
 
     def __init__(self, dimension, data):
-        if(type(data) is not list or type(dimension) is not int):
-            raise TypeError('El primer argumento debe ser un numero entero '+
+        if(not isinstance(data, list) or not isinstance(dimension, int)):
+            raise TypeError('El primer argumento debe ser un numero entero ' +
                             'y el segundo una lista')
 
         self.left = None
@@ -26,8 +26,8 @@ class Node:
         self.data = data
 
     def insert_node(self, data, dimension):
-        if(type(data) is not list or type(dimension) is not int):
-            raise TypeError('El primer argumento debe ser una lista de'+
+        if(not isinstance(data, list) or not isinstance(dimension, int)):
+            raise TypeError('El primer argumento debe ser una lista de' +
                             'y el segundo un numero entero')
 
         if data:
@@ -39,8 +39,8 @@ class Node:
                 return self.right
 
     def insert_leaf(self, data, isMinor):
-        if(type(data) is not list or type(isMinor) is not bool):
-            raise TypeError('El primer argumento debe ser una lista de'+
+        if(not isinstance(data, list) or not isinstance(isMinor, bool)):
+            raise TypeError('El primer argumento debe ser una lista de' +
                             'y el segundo un boolean')
         if isMinor:
             self.left = Node(-1, data)
@@ -64,7 +64,7 @@ Restricciones: data debe ser una matriz y k un numero entero
 
 def create_kd_tree(data, k):
     print_level = True
-    dimension_len = len(data[0])-1
+    dimension_len = len(data[0]) - 1
     return create_kd_tree_aux(data, dimension_len, k, None, 0)
 
 # ----------------------------------------------------------------------------
@@ -87,14 +87,14 @@ def create_kd_tree_aux(data, dimension_len, k, root, level):
     n = len(data)
     random_dimension = level % dimension_len
     sorted_data = sorted(data, key=lambda point: point[random_dimension])
-    median = sorted_data[n//2]
+    median = sorted_data[n // 2]
 
     if root is None:
         new_root = Node(random_dimension, median)
-        create_kd_tree_aux(sorted_data[:n//2], dimension_len,
-                           k, new_root, level+1)
-        create_kd_tree_aux(sorted_data[n//2:], dimension_len,
-                           k, new_root, level+1)
+        create_kd_tree_aux(sorted_data[:n // 2], dimension_len,
+                           k, new_root, level + 1)
+        create_kd_tree_aux(sorted_data[n // 2:], dimension_len,
+                           k, new_root, level + 1)
         return new_root
     elif len(data) <= k:
         if len(data) != 0:
@@ -104,10 +104,10 @@ def create_kd_tree_aux(data, dimension_len, k, root, level):
                 root.insert_leaf(data, True)
     else:
         new_root = root.insert_node(median, random_dimension)
-        create_kd_tree_aux(sorted_data[:n//2], dimension_len,
-                           k, new_root, level+1)
-        create_kd_tree_aux(sorted_data[n//2:], dimension_len,
-                           k, new_root, level+1)
+        create_kd_tree_aux(sorted_data[:n // 2], dimension_len,
+                           k, new_root, level + 1)
+        create_kd_tree_aux(sorted_data[n // 2:], dimension_len,
+                           k, new_root, level + 1)
 
 # ----------------------------------------------------------------------------
 
@@ -132,9 +132,9 @@ def closer_distance(data, left, right):
     data_left = left.data
     data_right = right.data
 
-    if type(data_left[0]) is list:
+    if isinstance(data_left[0], list):
         data_left = closest_point(data_left, data)
-    if type(data_right[0]) is list:
+    if isinstance(data_right[0], list):
         data_right = closest_point(data_right, data)
 
     d1 = distance(data, data_left)
@@ -181,7 +181,7 @@ def kd_tree_find_neighbors(root, data, level=0):
             opposite_branch = root.left
 
     best_branch = closer_distance(data, next_branch, opposite_branch)
-    return kd_tree_find_neighbors(best_branch, data, level+1)
+    return kd_tree_find_neighbors(best_branch, data, level + 1)
 
 # ----------------------------------------------------------------------------
 
@@ -255,16 +255,16 @@ Restricciones: n y k deben ser enteros y percentage un valor entre 0-100
 
 
 def kd_tree(n, k, percentage):
-    myData = [['poblacion_canton', 'superficie_canton','densidad_poblacion',
-               'urbano','sexo','dependencia_demografica','ocupa_vivienda',
-               'promedio_ocupantes','vivienda_buen_estado',
-               'vivienda_hacinada','alfabetismo','escolaridad_promedio',
-               'educacion_regular','fuera_fuerza_trabajo',
-               'participacion_fuerza_trabajo','asegurado','extranjero',
-               'discapacidad','no_asegurado', 'porcentaje_jefatura_femenina',
-               'porcentaje_jefatura_compartida', 'edad','voto_primera_ronda',
-               'voto_segunda_ronda','es_entrenamiento', 'prediccion_r1',
-               'prediccion_r2','prediccion_r2_con_r1']]
+    myData = [['poblacion_canton', 'superficie_canton', 'densidad_poblacion',
+               'urbano', 'sexo', 'dependencia_demografica', 'ocupa_vivienda',
+               'promedio_ocupantes', 'vivienda_buen_estado',
+               'vivienda_hacinada', 'alfabetismo', 'escolaridad_promedio',
+               'educacion_regular', 'fuera_fuerza_trabajo',
+               'participacion_fuerza_trabajo', 'asegurado', 'extranjero',
+               'discapacidad', 'no_asegurado', 'porcentaje_jefatura_femenina',
+               'porcentaje_jefatura_compartida', 'edad', 'voto_primera_ronda',
+               'voto_segunda_ronda', 'es_entrenamiento', 'prediccion_r1',
+               'prediccion_r2', 'prediccion_r2_con_r1']]
 
     if(percentage <= 100 and percentage > 0):
         muestra = generar_muestra_pais(n)
@@ -277,7 +277,7 @@ def kd_tree(n, k, percentage):
         data_r2 = np.array(data_r2).tolist()
         data_r2_r1 = np.array(data_r2_r1).tolist()
 
-        percentage = n * (percentage/100)
+        percentage = n * (percentage / 100)
         percentage = int(round(percentage, 0))
 
         print("\nPrediccin_r1")
@@ -366,13 +366,13 @@ def kd_tree_aux(data, k, percentage, myData, type_data):
         i += 1
 
     print("\nEl error de training es de {}".format(
-        incorrect_train/len(data_training)))
+        incorrect_train / len(data_training)))
     print("El error de testing es de {}".format(
-        incorrect_test/len(data_testing)))
+        incorrect_test / len(data_testing)))
     print("La precision de training es de {}%".format((
-        correct_train/len(data_training))*100))
+        correct_train / len(data_training)) * 100))
     print("La precision de testing es de {}%".format((
-        correct_test/len(data_testing))*100))
+        correct_test / len(data_testing)) * 100))
     return myData
 
 # ----------------------------------------------------------------------------
@@ -387,19 +387,19 @@ Restricciones: myData debe un arreglo
 
 
 def create_csv(myData):
-    if(type(myData) is not list):
+    if(not isinstance(myData, list)):
         raise TypeError('El argumento debe ser una lista de listas')
     for i in range(len(myData)):
-        if(type(myData[i]) is not list):
+        if(not isinstance(myData[i], list)):
             raise TypeError('El parametro debe ser una lista de listas')
-        if(i!=0):
-            if(type(myData[i][0]) is not list):
+        if(i != 0):
+            if(not isinstance(myData[i][0], list)):
                 raise TypeError('El primer elemento de cada elemento'
                                 'de la lista debe ser una lista')
-            if(len(myData[i][0]) <5):
-                raise AttributeError('El primer elemento de cada elemento de la lista'+
-                                'debe ser una lista de un tamaño mayor a 4')
-
+            if(len(myData[i][0]) < 5):
+                raise AttributeError(
+                    'El primer elemento de cada elemento de la lista' +
+                    'debe ser una lista de un tamaño mayor a 4')
 
     file = open('resultados_kd_tree.csv', 'w', newline='')
     salida = csv.writer(file)
@@ -423,12 +423,12 @@ Restricciones: point1 y point2 debe ser arreglos de tamaño>1
 
 
 def distance(point1, point2):
-    if(type(point1) is not list or type(point2) is not list):
+    if(not isinstance(point1, list) or not isinstance(point2, list)):
         raise TypeError('Los puntos tiene que ser listas')
 
     result = 0
-    for i in range(len(point1)-1):
-        dx = point1[i]-point2[i]
+    for i in range(len(point1) - 1):
+        dx = point1[i] - point2[i]
         result += dx * dx
     return math.sqrt(result)
 
@@ -446,11 +446,11 @@ Restricciones: all_points debe estar en forma de matrix y new_point ser un
 
 
 def closest_point(all_points, new_point):
-    if(type(all_points) is not list or type(new_point) is not list):
-        raise TypeError('El primer argumento debe ser una lista de listas'+
+    if(not isinstance(all_points, list) or not isinstance(new_point, list)):
+        raise TypeError('El primer argumento debe ser una lista de listas' +
                         'y el segundo una lista')
-    if(type(all_points[0]) is not list):
-        raise TypeError('El primer argumento debe ser una lista de listas'+
+    if(not isinstance(all_points[0], list)):
+        raise TypeError('El primer argumento debe ser una lista de listas' +
                         'y el segundo una lista')
 
     best_point = None

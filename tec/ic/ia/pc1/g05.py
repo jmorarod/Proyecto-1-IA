@@ -82,7 +82,9 @@ def generar_muestra_aux(n, provincia):
     _poblacion = set_poblacion(_indices_cantonales)
     _poblacion_por_canton = generar_probabilidad_acumulada(_poblacion)
     _votos = pd.read_csv(RUTA_VOTOS_POR_CANTON)
-    _votos_segunda_ronda = pd.read_csv(RUTA_VOTOS_POR_CANTON_2, encoding = "ISO-8859-1")
+    _votos_segunda_ronda = pd.read_csv(
+        RUTA_VOTOS_POR_CANTON_2,
+        encoding="ISO-8859-1")
     temp = []
     temp2 = []
     for i in range(1, 82):
@@ -93,7 +95,10 @@ def generar_muestra_aux(n, provincia):
     temp = []
     temp2 = []
     _partidos = pd.read_csv(RUTA_VOTOS_POR_CANTON, usecols=[0])
-    _partidos_2 = pd.read_csv(RUTA_VOTOS_POR_CANTON_2, encoding = "ISO-8859-1", usecols=[0])
+    _partidos_2 = pd.read_csv(
+        RUTA_VOTOS_POR_CANTON_2,
+        encoding="ISO-8859-1",
+        usecols=[0])
     for i in range(0, 15):
         temp += [_partidos.ix[i, 0]]
     for i in range(0, 4):
@@ -121,7 +126,7 @@ def generar_muestra_aux(n, provincia):
             _votos[i], sumar_vector(_votos[i], 15))
         _probabilidad_votos += [probabilidades]
         probabilidades_2 = calcular_probabilidad_votos(
-            _votos_segunda_ronda [i], sumar_vector(_votos_segunda_ronda[i], 4))
+            _votos_segunda_ronda[i], sumar_vector(_votos_segunda_ronda[i], 4))
         _probabilidad_votos_2 += [probabilidades_2]
     #start = time.clock()
     for i in range(0, n):
@@ -205,12 +210,12 @@ def generar_votante(provincia):
     if(votante[6] == 1):
         votante[8] = sample(_indices_cantonales[8][num_canton])
     else:
-        votante[8] = 2#"SIN VIVIENDA"
+        votante[8] = 2  # "SIN VIVIENDA"
     # vivienda hacinada
     if(votante[6] == 1):
         votante[9] = sample(_indices_cantonales[9][num_canton])
     else:
-        votante[9] = 2#"SIN VIVIENDA"
+        votante[9] = 2  # "SIN VIVIENDA"
     # alfabetismo
     if(edad <= 24):
         votante[10] = sample(_indices_cantonales[11][num_canton])
@@ -230,7 +235,7 @@ def generar_votante(provincia):
         votante[12] = _indices_cantonales[20][num_canton]
 
     # participacion en la fuerza de trabajo
-    if(sexo == 1): #Hombre = 1 Mujer = 2
+    if(sexo == 1):  # Hombre = 1 Mujer = 2
         votante[14] = sample(_indices_cantonales[23][num_canton])
     else:
         votante[14] = sample(_indices_cantonales[24][num_canton])
@@ -243,7 +248,7 @@ def generar_votante(provincia):
     if(votante[14] == 1):
         votante[15] = sample(_indices_cantonales[25][num_canton])
     else:
-        votante[15] = 2#"NFT"
+        votante[15] = 2  # "NFT"
     # Nacido en el extranjero
     votante[16] = sample(_indices_cantonales[26][num_canton])
     # discapacidad
@@ -282,9 +287,9 @@ def muestra_sexo(num_canton):
     indice = cantidad_hombres / (cantidad_hombres + 100)
     rand_num = uniform(0, 1)
     if(rand_num < indice):
-        return 1#"HOMBRE"
+        return 1  # "HOMBRE"
     else:
-        return 2#"MUJER"
+        return 2  # "MUJER"
 
 
 def generar_edad(num_canton, sexo):

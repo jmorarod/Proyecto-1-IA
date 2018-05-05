@@ -712,7 +712,8 @@ def imprimir_hojas(arbol):
             imprimir_hojas(i)
 
 
-# función encargada de limpiar las variables globales que se utilizan para armar el árbol de decisión
+# función encargada de limpiar las variables globales que se utilizan para
+# armar el árbol de decisión
 def limpiar_variables_globales():
     global encabezados
     global columnas_mayor_ocho
@@ -721,7 +722,6 @@ def limpiar_variables_globales():
     encabezados = []
     columnas_mayor_ocho = []
     atributos_utilizados = []
-    
 
 
 # función principal, en esta función se recibe el número de la muestra y el porcentaje para el conjunto de pruebas
@@ -731,8 +731,6 @@ def limpiar_variables_globales():
 
 
 def funcion_principal_arbol(numero_muestra, porcentaje_pruebas, umbral_poda):
-
-    
 
     # generación de la muestra y adaptación para los datos de primera ronda,
     # segunda ronda y primera + segunda ronda
@@ -773,7 +771,7 @@ def funcion_principal_arbol(numero_muestra, porcentaje_pruebas, umbral_poda):
 
     # predicciones para los datos de la primera ronda, con conjunto de
     # entrenamiento
-    predicciones_r1_entrenamiento,valores_reales_r1_entrenamiento = predecir(
+    predicciones_r1_entrenamiento, valores_reales_r1_entrenamiento = predecir(
         c_entrenamiento_r1, arbol_r1)
     verdaderos_positivos_r1_entrenamiento, falsos_positivos_r1_entrenamiento = obtener_verdaderos_falsos_positivos(
         predicciones_r1_entrenamiento, valores_reales_r1_entrenamiento)
@@ -923,8 +921,6 @@ def funcion_principal_arbol(numero_muestra, porcentaje_pruebas, umbral_poda):
             'prediccion_r2',
             'prediccion_r2_con_r1'])
     dataframe.to_csv('resultados_arbol_decision.csv', index=False)
-
-
 
 
 funcion_principal_arbol(10000, 25, 0.08)

@@ -25,7 +25,7 @@ def test_on_non_type_arguments_closest_point():
 
 def test_create_csv():
     result = create_csv([["Campo1", "Campo2"], [[0, 1, 2, 3, 4], 0, 1]])
-    assert result == None
+    assert result is None
 
 
 def test_on_non_type_parameter_create_csv():
@@ -70,7 +70,7 @@ def test_on_non_type_parameter_node():
 def test_insert_leaf():
     root = Node(0, [0, 1])
     result = root.insert_leaf([1, 2], True)
-    assert result == None
+    assert result is None
 
 
 def test_on_non_type_parameter_insert_leaf():
@@ -120,7 +120,7 @@ def test_get_nearest_neighbors_aux():
 
 def test_kd_tree():
     result = kd_tree(10, 2, 20)
-    assert result == None
+    assert result is None
 
 
 def test_kd_tree_aux():

@@ -53,13 +53,46 @@ def support_vector_machines(n_muestra, porcentaje_test, p_kernel):
     predicciones_train_r2_r1, predicciones_test_r2_r1 = predicciones_svm(
         train_r2_r1, test_r2_r1, model_r2_r1, "2_1")
     for i in range(0, len(train_r1)):
-        muestra[i] += [True, predicciones_train_r1[i]+1,
-                       predicciones_train_r2[i]+1, predicciones_train_r2_r1[i]+1]
+        muestra[i] += [True,
+                       predicciones_train_r1[i] + 1,
+                       predicciones_train_r2[i] + 1,
+                       predicciones_train_r2_r1[i] + 1]
     for i in range(0, len(test_r1)):
-        muestra[i+len(train_r1)] += [False, predicciones_test_r1[i]+1,
-                                     predicciones_test_r2[i]+1, predicciones_test_r2_r1[i]+1]
-    dataframe = pd.DataFrame(muestra, columns=['poblacion_canton', 'superficie_canton', 'densidad_poblacion', 'urbano', 'sexo', 'dependencia_demografica', 'ocupa_vivienda', 'promedio_ocupantes', 'vivienda_buen_estado', 'vivienda_hacinada', 'alfabetismo', 'escolaridad_promedio', 'educacion_regular', 'fuera_fuerza_trabajo',
-                                               'participacion_fuerza_trabajo', 'asegurado', 'extranjero', 'discapacidad', 'no_asegurado', 'porcentaje_jefatura_femenina', 'porcentaje_jefatura_compartida', 'edad', 'voto_primera_ronda', 'voto_segunda_ronda', 'es_entrenamiento', 'prediccion_r1', 'prediccion_r2', 'prediccion_r2_con_r1'])
+        muestra[i + len(train_r1)] += [False,
+                                       predicciones_test_r1[i] + 1,
+                                       predicciones_test_r2[i] + 1,
+                                       predicciones_test_r2_r1[i] + 1]
+    dataframe = pd.DataFrame(
+        muestra,
+        columns=[
+            'poblacion_canton',
+            'superficie_canton',
+            'densidad_poblacion',
+            'urbano',
+            'sexo',
+            'dependencia_demografica',
+            'ocupa_vivienda',
+            'promedio_ocupantes',
+            'vivienda_buen_estado',
+            'vivienda_hacinada',
+            'alfabetismo',
+            'escolaridad_promedio',
+            'educacion_regular',
+            'fuera_fuerza_trabajo',
+            'participacion_fuerza_trabajo',
+            'asegurado',
+            'extranjero',
+            'discapacidad',
+            'no_asegurado',
+            'porcentaje_jefatura_femenina',
+            'porcentaje_jefatura_compartida',
+            'edad',
+            'voto_primera_ronda',
+            'voto_segunda_ronda',
+            'es_entrenamiento',
+            'prediccion_r1',
+            'prediccion_r2',
+            'prediccion_r2_con_r1'])
     dataframe.to_csv(prefijo_csv + 'resultados_svm.csv', index=False)
 
 
@@ -120,21 +153,54 @@ def regresiones_logisticas(n_muestra, porcentaje_test, regularizacion):
     train_r2, test_r2 = split_muestra(muestra_r2, porcentaje_test)
     train_r2_r1, test_r2_r1 = split_muestra(muestra_r2_r1, porcentaje_test)
     predicciones_train_r1, predicciones_test_r1 = regresion_logistica_r1(
-        train_r1, test_r1, 5000/n_muestra, regularizacion)
+        train_r1, test_r1, 5000 / n_muestra, regularizacion)
     predicciones_train_r2, predicciones_test_r2 = regresion_logistica(
-        train_r2, test_r2, 5000/n_muestra, regularizacion)
+        train_r2, test_r2, 5000 / n_muestra, regularizacion)
     predicciones_train_r2_r1, predicciones_test_r2_r1 = regresion_logistica(
-        train_r2_r1, test_r2_r1, 5000/n_muestra, regularizacion, True)
+        train_r2_r1, test_r2_r1, 5000 / n_muestra, regularizacion, True)
     for i in range(0, len(train_r1)):
-        muestra[i] += [True, predicciones_train_r1[i]+1,
-                       predicciones_train_r2[i]+1, predicciones_train_r2_r1[i]+1]
+        muestra[i] += [True,
+                       predicciones_train_r1[i] + 1,
+                       predicciones_train_r2[i] + 1,
+                       predicciones_train_r2_r1[i] + 1]
     for i in range(0, len(test_r1)):
-        muestra[i+len(train_r1)] += [False, predicciones_test_r1[i]+1,
-                                     predicciones_test_r2[i]+1, predicciones_test_r2_r1[i]+1]
-    dataframe = pd.DataFrame(muestra, columns=['poblacion_canton', 'superficie_canton', 'densidad_poblacion', 'urbano', 'sexo', 'dependencia_demografica', 'ocupa_vivienda', 'promedio_ocupantes', 'vivienda_buen_estado', 'vivienda_hacinada', 'alfabetismo', 'escolaridad_promedio', 'educacion_regular', 'fuera_fuerza_trabajo',
-                                               'participacion_fuerza_trabajo', 'asegurado', 'extranjero', 'discapacidad', 'no_asegurado', 'porcentaje_jefatura_femenina', 'porcentaje_jefatura_compartida', 'edad', 'voto_primera_ronda', 'voto_segunda_ronda', 'es_entrenamiento', 'prediccion_r1', 'prediccion_r2', 'prediccion_r2_con_r1'])
+        muestra[i + len(train_r1)] += [False,
+                                       predicciones_test_r1[i] + 1,
+                                       predicciones_test_r2[i] + 1,
+                                       predicciones_test_r2_r1[i] + 1]
+    dataframe = pd.DataFrame(
+        muestra,
+        columns=[
+            'poblacion_canton',
+            'superficie_canton',
+            'densidad_poblacion',
+            'urbano',
+            'sexo',
+            'dependencia_demografica',
+            'ocupa_vivienda',
+            'promedio_ocupantes',
+            'vivienda_buen_estado',
+            'vivienda_hacinada',
+            'alfabetismo',
+            'escolaridad_promedio',
+            'educacion_regular',
+            'fuera_fuerza_trabajo',
+            'participacion_fuerza_trabajo',
+            'asegurado',
+            'extranjero',
+            'discapacidad',
+            'no_asegurado',
+            'porcentaje_jefatura_femenina',
+            'porcentaje_jefatura_compartida',
+            'edad',
+            'voto_primera_ronda',
+            'voto_segunda_ronda',
+            'es_entrenamiento',
+            'prediccion_r1',
+            'prediccion_r2',
+            'prediccion_r2_con_r1'])
     dataframe.to_csv(
-        prefijo_csv+'resultados_regresion_logisitica.csv', index=False)
+        prefijo_csv + 'resultados_regresion_logisitica.csv', index=False)
 
 
 def regresion_logistica_r1(train_set, test_set, learning_rate, regularizacion):
@@ -163,15 +229,17 @@ def regresion_logistica_r1(train_set, test_set, learning_rate, regularizacion):
     b = tf.Variable(tf.zeros([15]))
 
     sess.run(tf.initialize_all_variables())
-    y_ = tf.nn.softmax(tf.matmul(x, W)+b)
+    y_ = tf.nn.softmax(tf.matmul(x, W) + b)
 
     cost = tf.nn.softmax_cross_entropy_with_logits(labels=y, logits=y_)
     if(regularizacion == "l1"):
-        optimizer = tf.train.FtrlOptimizer(learning_rate=learning_rate,
-                                           l1_regularization_strength=0.5).minimize(cost)
+        optimizer = tf.train.FtrlOptimizer(
+            learning_rate=learning_rate,
+            l1_regularization_strength=0.5).minimize(cost)
     else:
-        optimizer = tf.train.FtrlOptimizer(learning_rate=learning_rate,
-                                           l2_regularization_strength=0.5).minimize(cost)
+        optimizer = tf.train.FtrlOptimizer(
+            learning_rate=learning_rate,
+            l2_regularization_strength=0.5).minimize(cost)
 
     with tf.Session() as sess:
 
@@ -212,7 +280,12 @@ def regresion_logistica_r1(train_set, test_set, learning_rate, regularizacion):
     return predicciones_train, predicciones_test
 
 
-def regresion_logistica(train_set, test_set, learning_rate, regularizacion, r2_con_r1=False):
+def regresion_logistica(
+        train_set,
+        test_set,
+        learning_rate,
+        regularizacion,
+        r2_con_r1=False):
     num_epochs = 1500
     display_step = 1
     x_train = []
@@ -243,15 +316,17 @@ def regresion_logistica(train_set, test_set, learning_rate, regularizacion, r2_c
     b = tf.Variable(tf.zeros([4]))
 
     sess.run(tf.initialize_all_variables())
-    y_ = tf.nn.softmax(tf.matmul(x, W)+b)
+    y_ = tf.nn.softmax(tf.matmul(x, W) + b)
 
     cost = tf.nn.softmax_cross_entropy_with_logits(labels=y, logits=y_)
     if(regularizacion == "l1"):
-        optimizer = tf.train.FtrlOptimizer(learning_rate=learning_rate,
-                                           l1_regularization_strength=1.0).minimize(cost)
+        optimizer = tf.train.FtrlOptimizer(
+            learning_rate=learning_rate,
+            l1_regularization_strength=1.0).minimize(cost)
     else:
-        optimizer = tf.train.FtrlOptimizer(learning_rate=learning_rate,
-                                           l1_regularization_strength=1.0).minimize(cost)
+        optimizer = tf.train.FtrlOptimizer(
+            learning_rate=learning_rate,
+            l1_regularization_strength=1.0).minimize(cost)
     with tf.Session() as sess:
 
         sess.run(tf.global_variables_initializer())
@@ -301,7 +376,12 @@ def regresion_logistica(train_set, test_set, learning_rate, regularizacion, r2_c
     return predicciones_train, predicciones_test
 
 
-def redes_neuronales(n_muestra, porcentaje_test, num_capas, unidades_por_capa, activacion):
+def redes_neuronales(
+        n_muestra,
+        porcentaje_test,
+        num_capas,
+        unidades_por_capa,
+        activacion):
     global prefijo_csv
     muestra = generar_muestra_pais(n_muestra)
     muestra_r1 = datos_r1_normalizados(muestra)
@@ -317,18 +397,56 @@ def redes_neuronales(n_muestra, porcentaje_test, num_capas, unidades_por_capa, a
     predicciones_train_r2_r1, predicciones_test_r2_r1 = red_neuronal_r1_r2(
         train_r2_r1, test_r2_r1, num_capas, unidades_por_capa, activacion)
     for i in range(0, len(train_r1)):
-        muestra[i] += [True, predicciones_train_r1[i]+1,
-                       predicciones_train_r2[i]+1, predicciones_train_r2_r1[i]+1]
+        muestra[i] += [True,
+                       predicciones_train_r1[i] + 1,
+                       predicciones_train_r2[i] + 1,
+                       predicciones_train_r2_r1[i] + 1]
     for i in range(0, len(test_r1)):
-        muestra[i+len(train_r1)] += [False, predicciones_test_r1[i]+1,
-                                     predicciones_test_r2[i]+1, predicciones_test_r2_r1[i]+1]
-    dataframe = pd.DataFrame(muestra, columns=['poblacion_canton', 'superficie_canton', 'densidad_poblacion', 'urbano', 'sexo', 'dependencia_demografica', 'ocupa_vivienda', 'promedio_ocupantes', 'vivienda_buen_estado', 'vivienda_hacinada', 'alfabetismo', 'escolaridad_promedio', 'educacion_regular', 'fuera_fuerza_trabajo',
-                                               'participacion_fuerza_trabajo', 'asegurado', 'extranjero', 'discapacidad', 'no_asegurado', 'porcentaje_jefatura_femenina', 'porcentaje_jefatura_compartida', 'edad', 'voto_primera_ronda', 'voto_segunda_ronda', 'es_entrenamiento', 'prediccion_r1', 'prediccion_r2', 'prediccion_r2_con_r1'])
+        muestra[i + len(train_r1)] += [False,
+                                       predicciones_test_r1[i] + 1,
+                                       predicciones_test_r2[i] + 1,
+                                       predicciones_test_r2_r1[i] + 1]
+    dataframe = pd.DataFrame(
+        muestra,
+        columns=[
+            'poblacion_canton',
+            'superficie_canton',
+            'densidad_poblacion',
+            'urbano',
+            'sexo',
+            'dependencia_demografica',
+            'ocupa_vivienda',
+            'promedio_ocupantes',
+            'vivienda_buen_estado',
+            'vivienda_hacinada',
+            'alfabetismo',
+            'escolaridad_promedio',
+            'educacion_regular',
+            'fuera_fuerza_trabajo',
+            'participacion_fuerza_trabajo',
+            'asegurado',
+            'extranjero',
+            'discapacidad',
+            'no_asegurado',
+            'porcentaje_jefatura_femenina',
+            'porcentaje_jefatura_compartida',
+            'edad',
+            'voto_primera_ronda',
+            'voto_segunda_ronda',
+            'es_entrenamiento',
+            'prediccion_r1',
+            'prediccion_r2',
+            'prediccion_r2_con_r1'])
     dataframe.to_csv(
-        prefijo_csv+'resultados_redes_neuronales.csv', index=False)
+        prefijo_csv + 'resultados_redes_neuronales.csv', index=False)
 
 
-def red_neuronal_r1_r2(muestra, test, num_capas, unidades_por_capa, activacion):
+def red_neuronal_r1_r2(
+        muestra,
+        test,
+        num_capas,
+        unidades_por_capa,
+        activacion):
     x_train = []
     x_test = []
     y_test = get_column(test, -1)
@@ -514,7 +632,8 @@ def convert_from_one_hot(one_hot_output):
     return outputs
 
 
-# Recibe la muestra generada por la funcion generar_muestra_pais o generar_muestra_provincia
+# Recibe la muestra generada por la funcion generar_muestra_pais o
+# generar_muestra_provincia
 def datos_r1_normalizados(muestra):
     targets = get_column(muestra, -2)
     x_vector = []
@@ -577,7 +696,7 @@ Estructura de los nodos que conforman el arbol
 class Node:
 
     def __init__(self, dimension, data):
-        if(type(data) is not list or type(dimension) is not int):
+        if(not isinstance(data, list) or not isinstance(dimension, int)):
             raise TypeError('El primer argumento debe ser una lista de' +
                             'y el segundo un numero entero')
 
@@ -587,7 +706,7 @@ class Node:
         self.data = data
 
     def insert_node(self, data, dimension):
-        if(type(data) is not list or type(dimension) is not int):
+        if(not isinstance(data, list) or not isinstance(dimension, int)):
             raise TypeError('El primer argumento debe ser una lista de' +
                             'y el segundo un numero entero')
 
@@ -600,7 +719,7 @@ class Node:
                 return self.right
 
     def insert_leaf(self, data, isMinor):
-        if(type(data) is not list or type(isMinor) is not bool):
+        if(not isinstance(data, list) or not isinstance(isMinor, bool)):
             raise TypeError('El primer argumento debe ser una lista de' +
                             'y el segundo un boolean')
         if isMinor:
@@ -625,7 +744,7 @@ Restricciones: data debe ser una matriz y k un numero entero
 
 def create_kd_tree(data, k):
     print_level = True
-    dimension_len = len(data[0])-1
+    dimension_len = len(data[0]) - 1
     return create_kd_tree_aux(data, dimension_len, k, None, 0)
 
 # ----------------------------------------------------------------------------
@@ -648,14 +767,14 @@ def create_kd_tree_aux(data, dimension_len, k, root, level):
     n = len(data)
     random_dimension = level % dimension_len
     sorted_data = sorted(data, key=lambda point: point[random_dimension])
-    median = sorted_data[n//2]
+    median = sorted_data[n // 2]
 
     if root is None:
         new_root = Node(random_dimension, median)
-        create_kd_tree_aux(sorted_data[:n//2], dimension_len,
-                           k, new_root, level+1)
-        create_kd_tree_aux(sorted_data[n//2:], dimension_len,
-                           k, new_root, level+1)
+        create_kd_tree_aux(sorted_data[:n // 2], dimension_len,
+                           k, new_root, level + 1)
+        create_kd_tree_aux(sorted_data[n // 2:], dimension_len,
+                           k, new_root, level + 1)
         return new_root
     elif len(data) <= k:
         if len(data) != 0:
@@ -665,10 +784,10 @@ def create_kd_tree_aux(data, dimension_len, k, root, level):
                 root.insert_leaf(data, True)
     else:
         new_root = root.insert_node(median, random_dimension)
-        create_kd_tree_aux(sorted_data[:n//2], dimension_len,
-                           k, new_root, level+1)
-        create_kd_tree_aux(sorted_data[n//2:], dimension_len,
-                           k, new_root, level+1)
+        create_kd_tree_aux(sorted_data[:n // 2], dimension_len,
+                           k, new_root, level + 1)
+        create_kd_tree_aux(sorted_data[n // 2:], dimension_len,
+                           k, new_root, level + 1)
 
 # ----------------------------------------------------------------------------
 
@@ -693,9 +812,9 @@ def closer_distance(data, left, right):
     data_left = left.data
     data_right = right.data
 
-    if type(data_left[0]) is list:
+    if isinstance(data_left[0], list):
         data_left = closest_point(data_left, data)
-    if type(data_right[0]) is list:
+    if isinstance(data_right[0], list):
         data_right = closest_point(data_right, data)
 
     d1 = distance(data, data_left)
@@ -742,7 +861,7 @@ def kd_tree_find_neighbors(root, data, level=0):
             opposite_branch = root.left
 
     best_branch = closer_distance(data, next_branch, opposite_branch)
-    return kd_tree_find_neighbors(best_branch, data, level+1)
+    return kd_tree_find_neighbors(best_branch, data, level + 1)
 
 # ----------------------------------------------------------------------------
 
@@ -838,7 +957,7 @@ def kd_tree(n, k, percentage):
         data_r2 = np.array(data_r2).tolist()
         data_r2_r1 = np.array(data_r2_r1).tolist()
 
-        percentage = n * (percentage/100)
+        percentage = n * (percentage / 100)
         percentage = int(round(percentage, 0))
 
         print("\nPrediccin_r1")
@@ -927,13 +1046,13 @@ def kd_tree_aux(data, k, percentage, myData, type_data):
         i += 1
 
     print("\nEl error de training es de {}".format(
-        incorrect_train/len(data_training)))
+        incorrect_train / len(data_training)))
     print("El error de testing es de {}".format(
-        incorrect_test/len(data_testing)))
+        incorrect_test / len(data_testing)))
     print("La precision de training es de {}%".format((
-        correct_train/len(data_training))*100))
+        correct_train / len(data_training)) * 100))
     print("La precision de testing es de {}%".format((
-        correct_test/len(data_testing))*100))
+        correct_test / len(data_testing)) * 100))
     return myData
 
 # ----------------------------------------------------------------------------
@@ -948,18 +1067,19 @@ Restricciones: myData debe un arreglo
 
 
 def create_csv(myData):
-    if(type(myData) is not list):
+    if(not isinstance(myData, list)):
         raise TypeError('El argumento debe ser una lista de listas')
     for i in range(len(myData)):
-        if(type(myData[i]) is not list):
+        if(not isinstance(myData[i], list)):
             raise TypeError('El parametro debe ser una lista de listas')
         if(i != 0):
-            if(type(myData[i][0]) is not list):
+            if(not isinstance(myData[i][0], list)):
                 raise TypeError('El primer elemento de cada elemento'
                                 'de la lista debe ser una lista')
             if(len(myData[i][0]) < 5):
-                raise AttributeError('El primer elemento de cada elemento de la lista' +
-                                     'debe ser una lista de un tamaño mayor a 4')
+                raise AttributeError(
+                    'El primer elemento de cada elemento de la lista' +
+                    'debe ser una lista de un tamaño mayor a 4')
 
     global prefijo_csv
     file = open(prefijo_csv, 'w', newline='')
@@ -984,12 +1104,12 @@ Restricciones: point1 y point2 debe ser arreglos de tamaño>1
 
 
 def distance(point1, point2):
-    if(type(point1) is not list or type(point2) is not list):
+    if(not isinstance(point1, list) or not isinstance(point2, list)):
         raise TypeError('Los puntos tiene que ser listas')
 
     result = 0
-    for i in range(len(point1)-1):
-        dx = point1[i]-point2[i]
+    for i in range(len(point1) - 1):
+        dx = point1[i] - point2[i]
         result += dx * dx
     return math.sqrt(result)
 
@@ -1007,10 +1127,10 @@ Restricciones: all_points debe estar en forma de matrix y new_point ser un
 
 
 def closest_point(all_points, new_point):
-    if(type(all_points) is not list or type(new_point) is not list):
+    if(not isinstance(all_points, list) or not isinstance(new_point, list)):
         raise TypeError('El primer argumento debe ser una lista de listas' +
                         'y el segundo una lista')
-    if(type(all_points[0]) is not list):
+    if(not isinstance(all_points[0], list)):
         raise TypeError('El primer argumento debe ser una lista de listas' +
                         'y el segundo una lista')
 
@@ -1734,7 +1854,8 @@ def imprimir_hojas(arbol):
             imprimir_hojas(i)
 
 
-# función encargada de limpiar las variables globales que se utilizan para armar el árbol de decisión
+# función encargada de limpiar las variables globales que se utilizan para
+# armar el árbol de decisión
 def limpiar_variables_globales():
     global encabezados
     global columnas_mayor_ocho
@@ -1751,7 +1872,11 @@ def limpiar_variables_globales():
 # finalmente, se realizan podas en el árbol
 
 
-def funcion_principal_arbol(numero_muestra, porcentaje_pruebas, umbral_poda, prefijo):
+def funcion_principal_arbol(
+        numero_muestra,
+        porcentaje_pruebas,
+        umbral_poda,
+        prefijo):
 
     # generación de la muestra y adaptación para los datos de primera ronda,
     # segunda ronda y primera + segunda ronda
