@@ -1,4 +1,6 @@
 from tec.ic.ia.pc1.g05 import generar_muestra_pais, generar_muestra_provincia
+from arboldecision import *
+from kd_tree import *
 #from pc1 import generar_muestra_pais, generar_muestra_provincia
 import numpy as np
 from sklearn.preprocessing import StandardScaler
@@ -10,6 +12,9 @@ import keras
 from keras.optimizers import SGD
 import tensorflow as tf
 import pandas as pd
+import sys
+
+prefijo_csv = ""
 
 def split_muestra(muestra, porcentaje):
     cantidad_test = int(len(muestra) * (porcentaje / 100))
@@ -514,3 +519,43 @@ def datos_r2_con_r1_normalizados(muestra):
 
 def get_column(matrix, i):
     return [row[i] for row in matrix]
+
+
+def main(argv):
+    global prefijo_csv
+
+    prefijo_csv = argv[1]
+    numero_poblacion = int(argv[3])
+    porcentaje_pruebas = float(argv[5])
+
+    modelo = str(argv[6])
+
+    if modelo == "--regresion-logistica":
+        valor_l1 = float(argv[8])
+        valor_l2 = float(argv[10])
+        regresion_logistica(numero_poblacion, porcentaje_pruebas, valor_l1, valor_l2)
+    elif modelo == "--red-neuronal":
+        numero_capas = float(argv[8])
+        unidades_por_capa = float(argv[10])
+        funcion_activacion = float(argv[12])
+        
+        redes_neuronales(numero_poblacion, porcentaje_pruebas, numero_capas, unidades_por_capa, funcion_activacion)
+    elif modelo == "--arbol":
+        umbral_poda = float(argv[8])
+        print(umbral_poda)
+        funcion_principal_arbol(numero_poblacion, porcentaje_pruebas, umbral_poda, prefijo_csv)
+    elif modelo == "--knn":
+        valor_k = float(argv[8])
+        
+        kd_tree(numero_poblacion, valor_k, porcentaje_pruebas)
+    elif modelo == "--svm":
+        p_kernel = float(argv[8])
+        support_vector_machines(numero_poblacion, porcentaje_pruebas, p_kernel)
+        
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
+
+
+    

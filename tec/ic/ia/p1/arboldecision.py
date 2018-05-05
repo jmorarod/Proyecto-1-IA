@@ -730,7 +730,7 @@ def limpiar_variables_globales():
 # finalmente, se realizan podas en el árbol
 
 
-def funcion_principal_arbol(numero_muestra, porcentaje_pruebas, umbral_poda):
+def funcion_principal_arbol(numero_muestra, porcentaje_pruebas, umbral_poda, prefijo):
 
     
 
@@ -922,9 +922,11 @@ def funcion_principal_arbol(numero_muestra, porcentaje_pruebas, umbral_poda):
             'prediccion_r1',
             'prediccion_r2',
             'prediccion_r2_con_r1'])
-    dataframe.to_csv('resultados_arbol_decision.csv', index=False)
+    nombre = prefijo + "resultados_arbol_decision.csv" 
+    print(nombre)
+    dataframe.to_csv(nombre, index=False)
 
 
 
 
-funcion_principal_arbol(10000, 25, 0.08)
+#funcion_principal_arbol(10000, 25, 0.08, "p1")
