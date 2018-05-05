@@ -20,11 +20,11 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 # Fields marked as "Optional" may be commented out.
 
 setup(
-    name='tec.ic.ia.pc1.g05',  # Required
+    name='tec.ic.ia.p1.g05',  # Required
 
     version='2.0.0',  # Required
 
-    py_modules=['tec.ic.ia.pc1.g05'],
+    #py_modules=['tec.ic.ia.pc1.g05'],
 
     description='g',  # Required
 
