@@ -398,7 +398,7 @@ Para buscar los vecinos más cercanos con kd-tree se sigue el siguiente proceso:
 ### Implementación
 A lo largo del desarrollo del algoritmo se abarcaron diferentes enfoques, con resultados variados, en esta sección se explicará cada uno de esos enfoques.
 
-##### Consideraciones previas
+#### Consideraciones previas
 
 Primero es necesario detallar ciertas consideraciones que se tuvieron antes de explicar los enfoques.
 
@@ -480,7 +480,7 @@ El valor de error fue aproximadamente 0.41
 ##### Observaciones
 *	Los resultados de error del algoritmo no varían demasiado, el tamaño de k y cantidad de datos no afecta en gran medida la clasificación de datos y los resultados se mantiene estables. El valor de error da entre 0.71-0.75 para r1 y entre 0.41-0.49 para r2 y r1_con_r2.
 
-#### Conclusión
+### Conclusión
 
 El enfoque 3 fue el que dio mejores resultados porque a pesar de que el valor de error era muy similar al enfoque 2, el enfoque 3 fue mucho mas constante en sus resultados. 
 
@@ -488,10 +488,29 @@ En el enfoque 1 al ignorar las medias que fueran 0, mejoro mucho los resultados 
 
 Con el enfoque 2 el principal problema era la constancia de resultados porque podía dar 1 de error o un valor más bajo como 0.41
 
-En general el tiempo de ejecución de los 3 enfoques fue muy similar. Utilizando el enfoque 3, se tardó 7 segundos con un dataset de tamaño 10000, k=10, y porcentaje=20. La prueba mas grande que se realizo fue con un dataset de tamaño 100000, k=100, y porcentaje=20, esta prueba tardo 1 minuto con 20 segundos. A continuación, se muestran los resultados de ambas ejecuciones.
+En general el tiempo de ejecución de los 3 enfoques fue muy similar. Utilizando el enfoque 3, se tardó 7 segundos con un dataset de tamaño 10000, k=10, y porcentaje=20. La prueba mas grande que se realizo fue con un dataset de tamaño 100000, k=100, y porcentaje=20, esta prueba tardo 1 minuto con 20 segundos. 
 
-![Run1](https://i.imgur.com/eL8RZB7.png)
-![Run2](https://i.imgur.com/HOzJ49r.jpg)
+### Resultados 
+
+Utilizando el enfoque 3 y un 80% del conjunto de datos como muestras de entrenamiento se obtuvieron los siguientes resultadoS:
+ 
+Predicción |Tamaño de muestra| Tamaño de K | Error en entrenamiento | Precision en entrenamiento | Error en pruebas | Precision en pruebas
+-----------|---------------|----------------|------------------------|----------------------------|------------------|--------------------|
+Ronda 1 | 10000 | 5 | 0.906| 9.4% | 0.912 | 8.79%
+Ronda 1 | 10000 |25  | 0.783375 | 21.6625% | 0.81  | 19.0%
+Ronda 1 | 10000 | 50 | 0.785375 | 21.4625% |  0.812 | 18.8%
+Ronda 1 | 10000 | 100 | 0.76 | 24.0%  | 0.745 | 25.5%
+Ronda 1 | 10000 | 150  | 0.7475 | 25.25% | 0.7475 | 25.25%
+Ronda 2 | 10000 | 5 | 0.41775 | 58.225% | 0.4095 |  59.0504%
+Ronda 2 | 10000 | 25 | 0.457375 | 54.2625% | 0.4445|  55.55%
+Ronda 2 | 10000 | 50 | 0.428125 |57.1875% | 0.4265  |   57.35%
+Ronda 2 | 10000 | 100 | 0.417375 | 58.262496% | 0.4135 |  58.6506%
+Ronda 2 | 10000 | 150 | 0.41925 | 58.07496% | 0.4175 | 58.25%
+Ronda 2 con Ronda 1 | 10000 | 5 | 0.416125 | 58.3875%  | 0.4095 |  59.0504%
+Ronda 2 con Ronda 1 | 10000 | 25 | 0.466125  | 53.387497%| 0.461 |  53.9%
+Ronda 2 con Ronda 1 | 10000 | 50 | 0.428 | 57.196%  | 0.4265 | 57.35%
+Ronda 2 con Ronda 1 | 10000 | 100  | 0.41675 | 58.325% | 0.4135 |  58.6506%
+Ronda 2 con Ronda 1 | 10000 | 150 |  0.420125  | 57.987504% | 0.4175 |  58.25% 
 
 # Instalación de las herramientas
 Si bien, los módulos tec.ic.ia.pc1.g05 y tec.ic.ac.p1.g05 al ser importados, se instalarán todas las dependencias del proyecto, se listarán los comandos necesarios (pip) para instalar las herramientas manualmente.
