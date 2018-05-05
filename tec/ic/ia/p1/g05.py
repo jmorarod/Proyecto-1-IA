@@ -2081,10 +2081,14 @@ def main(argv):
     modelo = str(argv[6])
 
     if modelo == "--regresion-logistica":
-        valor_l1 = float(argv[8])
-        valor_l2 = float(argv[10])
+        valor_l1 = str(argv[8])
+        valor_l2 = str(argv[10])
         regresion_logistica(
-            numero_poblacion, porcentaje_pruebas, valor_l1, valor_l2)
+            numero_poblacion, porcentaje_pruebas, valor_l1)
+        regresion_logistica(
+            numero_poblacion, porcentaje_pruebas, valor_l1)
+        regresion_logistica(
+            numero_poblacion, porcentaje_pruebas, valor_l2)
     elif modelo == "--red-neuronal":
         numero_capas = float(argv[8])
         unidades_por_capa = float(argv[10])
