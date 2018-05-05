@@ -17,9 +17,9 @@ class Node:
 
     def __init__(self, dimension, data):
         if(type(data) is not list or type(dimension) is not int):
-            raise TypeError('El primer argumento debe ser una lista de'+
-                            'y el segundo un numero entero')
-        
+            raise TypeError('El primer argumento debe ser un numero entero '+
+                            'y el segundo una lista')
+
         self.left = None
         self.right = None
         self.dimension = dimension
@@ -29,7 +29,7 @@ class Node:
         if(type(data) is not list or type(dimension) is not int):
             raise TypeError('El primer argumento debe ser una lista de'+
                             'y el segundo un numero entero')
-        
+
         if data:
             if data[self.dimension] < self.data[self.dimension]:
                 self.left = Node(dimension, data)
@@ -285,7 +285,7 @@ def kd_tree(n, k, percentage):
         print("\nPrediccin_r2")
         myData = kd_tree_aux(data_r2, k, percentage, myData, 1)
         print("\nPrediccin_r1_r2")
-        myData = kd_tree_aux(data_r2_r1, k, percentage, myData, 2)      
+        myData = kd_tree_aux(data_r2_r1, k, percentage, myData, 2)
 
         create_csv(myData)
         print("\nVer archivo 'resultados_kd_tree' para mas información\n")
@@ -399,8 +399,8 @@ def create_csv(myData):
             if(len(myData[i][0]) <5):
                 raise AttributeError('El primer elemento de cada elemento de la lista'+
                                 'debe ser una lista de un tamaño mayor a 4')
-        
-    
+
+
     file = open('resultados_kd_tree.csv', 'w', newline='')
     salida = csv.writer(file)
     salida.writerow(myData[0])
@@ -452,7 +452,7 @@ def closest_point(all_points, new_point):
     if(type(all_points[0]) is not list):
         raise TypeError('El primer argumento debe ser una lista de listas'+
                         'y el segundo una lista')
-    
+
     best_point = None
     best_distance = None
 

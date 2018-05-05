@@ -12,5 +12,13 @@
   "K-d Tree/p1/test_kd_tree.py::test_on_non_type_parameter_insert_node",
   "K-d Tree/p1/test_kd_tree.py::test_on_non_type_parameter_node",
   "K-d Tree/p1/test_kd_tree.py::test_insert_leaf",
-  "K-d Tree/p1/test_kd_tree.py::test_on_non_type_parameter_insert_leaf"
+  "K-d Tree/p1/test_kd_tree.py::test_on_non_type_parameter_insert_leaf",
+  "K-d Tree/p1/test_kd_tree.py::test_create_kd_tree",
+  "K-d Tree/p1/test_kd_tree.py::test_create_kd_tree_aux",
+  "K-d Tree/p1/test_kd_tree.py::test_closer_distance",
+  "K-d Tree/p1/test_kd_tree.py::test_kd_tree_find_neighbors",
+  "K-d Tree/p1/test_kd_tree.py::test_get_nearest_neighbors",
+  "K-d Tree/p1/test_kd_tree.py::test_get_nearest_neighbors_aux",
+  "K-d Tree/p1/test_kd_tree.py::test_kd_tree",
+  "K-d Tree/p1/test_kd_tree.py::test_kd_tree_aux"
 ]
