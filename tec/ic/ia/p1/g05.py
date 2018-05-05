@@ -32,6 +32,7 @@ def split_muestra(muestra, porcentaje):
             test_set += [muestra[i]]
     return training_set, test_set
 def support_vector_machines(n_muestra, porcentaje_test, p_kernel):
+    global prefijo_csv
     muestra = generar_muestra_pais(n_muestra)
     muestra_r1 = datos_r1_normalizados(muestra)
     muestra_r2 = datos_r2_normalizados(muestra)
@@ -50,7 +51,7 @@ def support_vector_machines(n_muestra, porcentaje_test, p_kernel):
     for i in range(0, len(test_r1)):
         muestra[i+len(train_r1)] += [False, predicciones_test_r1[i]+1,predicciones_test_r2[i]+1,predicciones_test_r2_r1[i]+1]
     dataframe = pd.DataFrame(muestra,columns=['poblacion_canton', 'superficie_canton','densidad_poblacion','urbano','sexo','dependencia_demografica','ocupa_vivienda','promedio_ocupantes','vivienda_buen_estado', 'vivienda_hacinada','alfabetismo','escolaridad_promedio','educacion_regular','fuera_fuerza_trabajo','participacion_fuerza_trabajo','asegurado','extranjero','discapacidad','no_asegurado', 'porcentaje_jefatura_femenina','porcentaje_jefatura_compartida', 'edad','voto_primera_ronda','voto_segunda_ronda','es_entrenamiento', 'prediccion_r1', 'prediccion_r2','prediccion_r2_con_r1'])
-    dataframe.to_csv('resultados_svm.csv',index=False)
+    dataframe.to_csv(prefijo_csv + 'resultados_svm.csv',index=False)
 
 def predicciones_svm(train_set, test_set, model, ronda):
     x_train = []
@@ -101,6 +102,7 @@ def predicciones_svm(train_set, test_set, model, ronda):
     
     
 def regresiones_logisticas(n_muestra, porcentaje_test, regularizacion):
+    global prefijo_csv
     muestra = generar_muestra_pais(n_muestra)
     muestra_r1 = datos_r1_normalizados(muestra)
     muestra_r2 = datos_r2_normalizados(muestra)
@@ -116,7 +118,7 @@ def regresiones_logisticas(n_muestra, porcentaje_test, regularizacion):
     for i in range(0, len(test_r1)):
         muestra[i+len(train_r1)] += [False, predicciones_test_r1[i]+1,predicciones_test_r2[i]+1,predicciones_test_r2_r1[i]+1]
     dataframe = pd.DataFrame(muestra,columns=['poblacion_canton', 'superficie_canton','densidad_poblacion','urbano','sexo','dependencia_demografica','ocupa_vivienda','promedio_ocupantes','vivienda_buen_estado', 'vivienda_hacinada','alfabetismo','escolaridad_promedio','educacion_regular','fuera_fuerza_trabajo','participacion_fuerza_trabajo','asegurado','extranjero','discapacidad','no_asegurado', 'porcentaje_jefatura_femenina','porcentaje_jefatura_compartida', 'edad','voto_primera_ronda','voto_segunda_ronda','es_entrenamiento', 'prediccion_r1', 'prediccion_r2','prediccion_r2_con_r1'])
-    dataframe.to_csv('resultados_regresion_logisitica.csv',index=False)
+    dataframe.to_csv(prefijo_csv+'resultados_regresion_logisitica.csv',index=False)
 
 def regresion_logistica_r1(train_set, test_set, learning_rate, regularizacion):
     num_epochs = 1500
@@ -273,6 +275,7 @@ def regresion_logistica(train_set, test_set, learning_rate, regularizacion, r2_c
 
 
 def redes_neuronales(n_muestra, porcentaje_test, num_capas, unidades_por_capa, activacion):
+    global prefijo_csv
     muestra = generar_muestra_pais(n_muestra)
     muestra_r1 = datos_r1_normalizados(muestra)
     muestra_r2 = datos_r2_normalizados(muestra)
@@ -288,7 +291,7 @@ def redes_neuronales(n_muestra, porcentaje_test, num_capas, unidades_por_capa, a
     for i in range(0, len(test_r1)):
         muestra[i+len(train_r1)] += [False, predicciones_test_r1[i]+1,predicciones_test_r2[i]+1,predicciones_test_r2_r1[i]+1]
     dataframe = pd.DataFrame(muestra,columns=['poblacion_canton', 'superficie_canton','densidad_poblacion','urbano','sexo','dependencia_demografica','ocupa_vivienda','promedio_ocupantes','vivienda_buen_estado', 'vivienda_hacinada','alfabetismo','escolaridad_promedio','educacion_regular','fuera_fuerza_trabajo','participacion_fuerza_trabajo','asegurado','extranjero','discapacidad','no_asegurado', 'porcentaje_jefatura_femenina','porcentaje_jefatura_compartida', 'edad','voto_primera_ronda','voto_segunda_ronda','es_entrenamiento', 'prediccion_r1', 'prediccion_r2','prediccion_r2_con_r1'])
-    dataframe.to_csv('resultados_redes_neuronales.csv',index=False)
+    dataframe.to_csv(prefijo_csv+'resultados_redes_neuronales.csv',index=False)
     
         
 
