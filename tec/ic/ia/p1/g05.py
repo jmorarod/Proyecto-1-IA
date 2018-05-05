@@ -2083,16 +2083,14 @@ def main(argv):
     if modelo == "--regresion-logistica":
         valor_l1 = str(argv[8])
         valor_l2 = str(argv[10])
-        regresion_logistica(
+        regresiones_logisticas(
             numero_poblacion, porcentaje_pruebas, valor_l1)
-        regresion_logistica(
-            numero_poblacion, porcentaje_pruebas, valor_l1)
-        regresion_logistica(
+        regresiones_logisticas(
             numero_poblacion, porcentaje_pruebas, valor_l2)
     elif modelo == "--red-neuronal":
-        numero_capas = float(argv[8])
-        unidades_por_capa = float(argv[10])
-        funcion_activacion = float(argv[12])
+        numero_capas = int(argv[8])
+        unidades_por_capa = eval(argv[10])
+        funcion_activacion = str(argv[12])
 
         redes_neuronales(numero_poblacion, porcentaje_pruebas,
                          numero_capas, unidades_por_capa, funcion_activacion)
@@ -2106,7 +2104,7 @@ def main(argv):
 
         kd_tree(numero_poblacion, valor_k, porcentaje_pruebas)
     elif modelo == "--svm":
-        p_kernel = float(argv[8])
+        p_kernel = str(argv[8])
         support_vector_machines(numero_poblacion, porcentaje_pruebas, p_kernel)
 
 
