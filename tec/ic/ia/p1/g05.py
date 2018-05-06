@@ -18,6 +18,8 @@ from arbol import Nodo, Hoja, Atributo
 import csv
 
 
+es_por_provincia = False
+provincia = ""
 prefijo_csv = ""
 
 
@@ -35,8 +37,16 @@ def split_muestra(muestra, porcentaje):
 
 
 def support_vector_machines(n_muestra, porcentaje_test, p_kernel):
+    global es_por_provincia
+    global provincia
     global prefijo_csv
-    muestra = generar_muestra_pais(n_muestra)
+    muestra = ""
+    if not es_por_provincia:
+        print("generar_muestra_pais")
+        muestra = generar_muestra_pais(n_muestra)
+    else:
+        print("generar_muestra_provincia")
+        muestra = generar_muestra_provincia(n_muestra, provincia)
     muestra_r1 = datos_r1_normalizados(muestra)
     muestra_r2 = datos_r2_normalizados(muestra)
     muestra_r2_r1 = datos_r2_con_r1_normalizados(muestra)
@@ -145,7 +155,16 @@ def predicciones_svm(train_set, test_set, model, ronda):
 
 def regresiones_logisticas(n_muestra, porcentaje_test, regularizacion):
     global prefijo_csv
-    muestra = generar_muestra_pais(n_muestra)
+    global es_por_provincia
+    global provincia
+    
+    muestra = ""
+    if not es_por_provincia:
+        print("generar_muestra_pais")
+        muestra = generar_muestra_pais(n_muestra)
+    else:
+        print("generar_muestra_provincia")
+        muestra = generar_muestra_provincia(n_muestra, provincia)
     muestra_r1 = datos_r1_normalizados(muestra)
     muestra_r2 = datos_r2_normalizados(muestra)
     muestra_r2_r1 = datos_r2_con_r1_normalizados(muestra)
@@ -383,7 +402,17 @@ def redes_neuronales(
         unidades_por_capa,
         activacion):
     global prefijo_csv
-    muestra = generar_muestra_pais(n_muestra)
+    global es_por_provincia
+    global provincia
+    
+    muestra = ""
+    if not es_por_provincia:
+        print("generar_muestra_pais")
+        muestra = generar_muestra_pais(n_muestra)
+    else:
+        print("generar_muestra_provincia")
+        muestra = generar_muestra_provincia(n_muestra, provincia)
+    
     muestra_r1 = datos_r1_normalizados(muestra)
     muestra_r2 = datos_r2_normalizados(muestra)
     muestra_r2_r1 = datos_r2_con_r1_normalizados(muestra)
@@ -935,6 +964,10 @@ Restricciones: n y k deben ser enteros y percentage un valor entre 0-100
 
 
 def kd_tree(n, k, percentage):
+    global es_por_provincia
+    global provincia
+    
+
     myData = [['poblacion_canton', 'superficie_canton', 'densidad_poblacion',
                'urbano', 'sexo', 'dependencia_demografica', 'ocupa_vivienda',
                'promedio_ocupantes', 'vivienda_buen_estado',
@@ -947,7 +980,15 @@ def kd_tree(n, k, percentage):
                'prediccion_r2', 'prediccion_r2_con_r1']]
 
     if(percentage <= 100 and percentage > 0):
-        muestra = generar_muestra_pais(n)
+        muestra = ""
+        print(es_por_provincia)
+        if es_por_provincia == False:
+            print("generar_muestra_pais")
+            muestra = generar_muestra_pais(n)
+        else:
+            print("generar_muestra_provincia")
+            muestra = generar_muestra_provincia(n, provincia)
+    
 
         data_r1 = datos_r1_normalizados(muestra)
         data_r2 = datos_r2_normalizados(muestra)
@@ -1082,6 +1123,7 @@ def create_csv(myData):
                     'debe ser una lista de un tamaño mayor a 4')
 
     global prefijo_csv
+
     file = open(prefijo_csv, 'w', newline='')
     salida = csv.writer(file)
     salida.writerow(myData[0])
@@ -1878,9 +1920,19 @@ def funcion_principal_arbol(
         umbral_poda,
         prefijo):
 
+    global es_por_provincia
+    global provincia
+    
+    muestra = ""
     # generación de la muestra y adaptación para los datos de primera ronda,
     # segunda ronda y primera + segunda ronda
-    muestra = generar_muestra_pais(numero_muestra)
+    if not es_por_provincia:
+        print("generar_muestra_pais")
+        muestra = generar_muestra_pais(numero_muestra)
+    else:
+        print("generar_muestra_provincia")
+        muestra = generar_muestra_provincia(numero_muestra, provincia)
+    
     data_r1 = datos_r1_normalizados(muestra)
     data_r2 = datos_r2_normalizados(muestra)
     data_r2_r1 = datos_r2_con_r1_normalizados(muestra)
@@ -2073,6 +2125,8 @@ def funcion_principal_arbol(
 
 def main(argv):
     global prefijo_csv
+    global es_por_provincia
+    global provincia
 
     prefijo_csv = argv[1]
     numero_poblacion = int(argv[3])
@@ -2083,28 +2137,56 @@ def main(argv):
     if modelo == "--regresion-logistica":
         valor_l1 = str(argv[8])
         valor_l2 = str(argv[10])
+        provincia_e = str(argv[12])
+        if provincia_e != "no":
+            es_por_provincia = True
+            provincia = provincia_e
         regresiones_logisticas(
             numero_poblacion, porcentaje_pruebas, valor_l1)
         regresiones_logisticas(
             numero_poblacion, porcentaje_pruebas, valor_l2)
+        
+       
     elif modelo == "--red-neuronal":
         numero_capas = int(argv[8])
         unidades_por_capa = eval(argv[10])
         funcion_activacion = str(argv[12])
-
+        provincia_e = str(argv[14])
+        if provincia_e != "no":
+            es_por_provincia = True
+            provincia = provincia_e
+        
+        
         redes_neuronales(numero_poblacion, porcentaje_pruebas,
                          numero_capas, unidades_por_capa, funcion_activacion)
     elif modelo == "--arbol":
         umbral_poda = float(argv[8])
         print(umbral_poda)
+        provincia_e = str(argv[10])
+        if provincia_e != "no":
+            es_por_provincia = True
+            provincia = provincia_e
+        
         funcion_principal_arbol(
             numero_poblacion, porcentaje_pruebas, umbral_poda, prefijo_csv)
     elif modelo == "--knn":
         valor_k = float(argv[8])
-
+        provincia_e = str(argv[10])
+        print("provincia")
+        print(provincia_e)
+        if provincia_e != "no":
+            es_por_provincia = True
+            provincia = provincia_e
+        
+        print(es_por_provincia)
         kd_tree(numero_poblacion, valor_k, porcentaje_pruebas)
     elif modelo == "--svm":
         p_kernel = str(argv[8])
+        provincia_e = str(argv[10])
+        if provincia_e != "no":
+            es_por_provincia = True
+            provincia = provincia_e
+        
         support_vector_machines(numero_poblacion, porcentaje_pruebas, p_kernel)
 
 
